@@ -158,3 +158,5 @@ rg "\"test\":" package.json
   la shape correcta y los códigos HTTP esperados.
 - `config-env-backend` — la BD de test usa su propia `DATABASE_URL_TEST` en config.
 - `base-datos-conexion-backend` — el pool de test se cierra en `afterAll`.
+- `logging-ops-backend` — en tests el logger va en nivel `silent` para no ensuciar la salida;
+  el test del handler central spyea `logger.error` y verifica que se invoca con el error real.

@@ -109,5 +109,8 @@ rg "jwt\.verify" src/ -l  # esperado: solo middleware/verifyToken
 - `errores-respuestas-backend` — 401/403 usan la shape estándar `{ error }` del handler central.
 - `validacion-entrada-backend` — schemas de `POST /auth/login` y `/auth/register` se validan como
   cualquier otra ruta.
-- **Precede** a `autorizacion-rbac`: primero autenticación (quién sos), después autorización
-  (qué podés hacer).
+- `base-datos-conexion-backend` — usuarios y refresh tokens se persisten vía la capa `db/`
+  (tabla `refresh_tokens` o campo en `users`); hash del password y rotación de token usan el
+  pool único y las transacciones de esa capa.
+- **Precede** a la autorización (RBAC, fuera de este repo): primero autenticación (quién sos),
+  después autorización (qué podés hacer).

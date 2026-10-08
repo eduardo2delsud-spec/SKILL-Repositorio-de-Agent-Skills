@@ -77,3 +77,5 @@ validación los formatea el handler central (400 con `details`).
 
 - **Complementa** `errores-respuestas-backend`: los `ValidationError` que lanza este middleware
   los formatea el handler central.
+- **No valida contra BD** (unicidad de email, existencia de FK): eso es regla de negocio de los
+  services que vienen después del middleware — `base-datos-conexion-backend` no se toca acá.

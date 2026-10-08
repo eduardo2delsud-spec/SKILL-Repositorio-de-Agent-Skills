@@ -42,6 +42,15 @@ SKILL/
 | [`formularios-frontend`](frontend/formularios-frontend/SKILL.md) | "formularios", "validación", "zod", "errores inline" | Schema Zod sincronizado con el contrato, errores inline, trampas de fechas |
 | [`ui-bloques-frontend`](frontend/ui-bloques-frontend/SKILL.md) | "paginación", "design tokens", "tema oscuro", "changelog" | Paginación en URL, tokens/tema, formateo Intl, modal de info accesible |
 
+## Orden de lectura recomendado (backend)
+
+Para armar un backend desde cero, seguir la cadena de dependencias — cada eslabón asume los
+anteriores:
+
+`arquitectura-backend` → `config-env-backend` → `autenticacion-jwt-backend` → `base-datos-conexion-backend` → `validacion-entrada-backend` → `errores-respuestas-backend` → `logging-ops-backend` → `testing-backend`
+
+Las conexiones exactas entre eslabones están en la sección `## Solapamiento` de cada skill.
+
 ## Formato de una skill
 
 Cada skill es una carpeta kebab-case con un `SKILL.md`:

@@ -127,3 +127,5 @@ rg "new Pool\|new Client\|createPool" src/ -l   # esperado: 1 archivo
 - `logging-ops-backend` — health check verifica la BD con un query simple.
 - `errores-respuestas-backend` — errores de BD (constraint violation, timeout) los atrapa el handler
   central; los services no deben traducir errores de BD a HTTP directamente.
+- `autenticacion-jwt-backend` — el flujo de login/register consume esta capa para leer hashes y
+  rota el refresh token con una transacción (leer → revocar → insertar); nunca desde el controller.
