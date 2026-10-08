@@ -61,7 +61,7 @@ central. Una sola shape de error en todo el backend.
      sobre `err.message` (frágil ante cambios de texto/i18n).
    - Errores de auth sin body vacío: 401/403 siempre con `{ error }`, jamás `sendStatus`.
 
-4. **Verificación (obligatoria antes de terminar):**
+4. **Verificación (obligatoria):**
 
    ```bash
    # controllers respondiendo errores directamente
@@ -84,7 +84,7 @@ central. Una sola shape de error en todo el backend.
 | Cero error handlers en el repo | `rg "next\(err\|errorHandler" src/` → sin matches |
 | Controllers con `res.status(500)` directo (el handler ni se alcanza) | `rg "res\.status\(500\)" src/ -c` alto vs `rg "next\(" src/ -c` bajo |
 | `error.message` devuelto al cliente | `rg "json\(\{ *error: *\(e" src/` o `send(error.message)` |
-| Respuestas con formas mezcladas (`{error}` vs `{message}` vs `sendStatus`) | `rg "res\.(json|send|sendStatus)" src/` y comparar shapes |
+| Respuestas con formas mezcladas (`{error}` vs `{message}` vs `sendStatus`) | `rg "res\.(json\|send\|sendStatus)" src/` y comparar shapes |
 | Clasificación por string sobre `err.message` | `rg "includes\(\|match\(" src/*errorHandler*` |
 | Sin 404 catch-all | `rg "notFound\|404" src/` sin registrar en `app.ts` |
 | Orden del chain: errorHandler antes de las rutas | Revisar orden de `app.use` en `app.ts` |

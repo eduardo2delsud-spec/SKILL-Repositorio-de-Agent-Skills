@@ -58,24 +58,7 @@ Reglas de contenido:
 - Ser "pushy": listar los contextos aunque no nombren la skill ("even if they don't
   explicitly ask...").
 
-### 4. Verificación (obligatoria)
-
-```bash
-# 1) name = carpeta
-rg "^name:" <categoria>/<carpeta>/SKILL.md        # debe imprimir la carpeta
-# 2) cero referencias externas (rutas ajenas al repo)
-rg -i "regla[s]/|patrone[s]/|br[ai]n/|proy[e]ctos/|portafoli[o]|openbr[ai]n|vizt[a]|vau[l]t" <carpeta>
-# 3) tamaño (objetivo ≤150, absoluto 500)
-Get-Content <carpeta>/SKILL.md | Measure-Object -Line
-# 4) secciones fijas presentes
-rg "^## " <carpeta>/SKILL.md
-# 5) changelog registra el alta/modificación en el mismo gesto
-rg "<nombre-de-la-skill>" CHANGELOG.md
-```
-
-Falla cualquiera → corregir antes de dar por terminada.
-
-### 5. Iterar con uso real
+### 4. Iterar con uso real
 
 - Probar con 2-3 prompts realistas (frases que diría un usuario, no las nuestras).
 - Si el agente **no dispara**: afinar Triggers en la description, no alargar el cuerpo.
@@ -83,15 +66,33 @@ Falla cualquiera → corregir antes de dar por terminada.
 - Generalizar: la skill se usará mil veces; un fix para un caso puntual que la estrecha es
   un retroceso. Preferir metáfora/criterio nuevo antes que reglas rígidas de a una.
 
+### 5. Verificación (obligatoria)
+
+```bash
+# 1) name = carpeta
+rg "^name:" <categoria>/<carpeta>/SKILL.md        # debe imprimir la carpeta
+# 2) cero referencias externas (rutas ajenas al repo)
+rg -i "regla[s]/|patrone[s]/|br[ai]n/|proy[e]ctos/|portafoli[o]|openbr[ai]n|vizt[a]|vau[l]t" <carpeta>
+# 3) tamaño (objetivo ≤150, absoluto 500)
+rg -c '^' <carpeta>/SKILL.md
+# 4) secciones fijas presentes
+rg "^## " <carpeta>/SKILL.md
+# 5) changelog registra el alta/modificación en el mismo gesto
+rg "<nombre-de-la-skill>" CHANGELOG.md
+```
+
+Falla cualquiera → corregir antes de dar por terminada (la suite se corre siempre al final,
+después de iterar con uso real).
+
 ## Anti-patrones (cómo detectarlos)
 
 | Anti-patrón | Detección |
 |---|---|
-| `name` ≠ nombre de carpeta | `rg "^name:" <carpeta>/SKILL.md` vs `basename` |
+| `name` ≠ nombre de carpeta | `rg "^name:" <carpeta>/SKILL.md` vs el nombre de la carpeta |
 | Description que resume el workflow (trap) | description con pasos/orden ("first... then...") en vez de `Use when` |
 | Sin `Triggers:` en español/ingles del usuario | `rg "Triggers:" <carpeta>/SKILL.md` → sin match |
 | Referencias externas al repo | `rg -i "openbr[ai]n\|br[ai]n/\|proy[e]ctos/" <carpeta>` |
-| Pasados de 150 líneas | `Get-Content <carpeta>/SKILL.md \| Measure-Object -Line` |
+| Pasados de 150 líneas | `rg -c '^' <carpeta>/SKILL.md` → > 150 |
 | Verificación ausente o sin comandos `rg` | última sección del checklist sin bloque bash |
 | Solapamiento con skills ajenas al repo | `rg "Solapamiento" -A5 <carpeta>` con nombres no listados en AGENTS.md |
 | Alta sin entrada en CHANGELOG | `rg "<skill>" CHANGELOG.md` → sin match |

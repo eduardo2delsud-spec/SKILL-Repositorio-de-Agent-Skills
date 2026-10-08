@@ -34,15 +34,9 @@ datos de otra suite.
 
 ```ts
 // tests/setup.ts
-beforeAll(async () => {
-  await runMigrations();
-});
-afterEach(async () => {
-  await truncateAll();     // limpiar datos entre tests
-});
-afterAll(async () => {
-  await pool.end();
-});
+beforeAll(runMigrations);        // migraciones al inicio
+afterEach(truncateAll);          // limpiar datos entre tests
+afterAll(() => pool.end());      // devolver conexiones al pool
 ```
 
 ### 3. Tests unitarios de services
@@ -50,7 +44,6 @@ afterAll(async () => {
 ```ts
 // tests/unit/users.service.test.ts
 import { createUser } from "../../src/modules/users/users.service";
-
 describe("createUser", () => {
   it("lanza AppError si el email ya existe", async () => {
     // mock del repository, NO de la BD
@@ -60,8 +53,7 @@ describe("createUser", () => {
 });
 ```
 
-- Mockear la **capa inferior** (repository/db), no la propia lógica.
-- Testear caminos: happy path + errores esperados + edge cases.
+- Mockear la **capa inferior** (repository/db), no la propia lógica; testear happy path, errores esperados y edge cases.
 
 ### 4. Tests de integración de rutas
 
@@ -72,16 +64,14 @@ import { app } from "../../src/app";
 
 describe("POST /api/v1/users", () => {
   it("201 con datos válidos", async () => {
-    const res = await request(app)
-      .post("/api/v1/users")
+    const res = await request(app).post("/api/v1/users")
       .send({ email: "new@test.com", password: "Str0ng!Pass" });
     expect(res.status).toBe(201);
     expect(res.body.data).toHaveProperty("id");
   });
 
   it("400 con email inválido", async () => {
-    const res = await request(app)
-      .post("/api/v1/users")
+    const res = await request(app).post("/api/v1/users")
       .send({ email: "invalid", password: "x" });
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty("error");
@@ -89,8 +79,7 @@ describe("POST /api/v1/users", () => {
 });
 ```
 
-- Usar `app` (sin `listen`) para evitar conflictos de puerto.
-- BD real (de test): valida el flujo completo ruta → middleware → controller → service → db.
+- Usar `app` (sin `listen`) y BD real de test: valida ruta → middleware → controller → service → db, sin conflictos de puerto.
 
 ### 5. Mocking correcto
 
@@ -127,36 +116,35 @@ export const adminUser = { email: "admin@test.com", password: "Admin123!", role:
 ### 8. Verificación (obligatoria)
 
 ```bash
-# tests existentes
-find tests/ -name "*.test.*" | wc -l
-# cobertura
-npx vitest run --coverage --reporter=text 2>&1 | tail -20
+# tests existentes (sin archivos = 0 tests)
+rg --files -g "*.test.*"
+# cobertura (fila "All files" del resumen)
+npx vitest run --coverage --reporter=text 2>&1 | rg "All files"
 # tests que dependen de orden (imports cruzados entre test files)
-rg "import.*from.*\\.test" tests/
-# credenciales reales en tests
-rg -i "password.*=.*['\"](?!Test|Str0ng|Admin|fake)" tests/
+rg 'import.*from.*\.test' tests/
+# credenciales reales en tests (descarta fixtures conocidas)
+rg -i "password.*=.*[\x27\x22]" tests/ | rg -vi "Test|Str0ng|Admin|fake"
 # scripts de test en package.json
-rg "\"test\":" package.json
+rg '\x22test\x22:' package.json
 ```
 
 ## Anti-patrones (cómo detectarlos)
 
 | Anti-patrón | Detección |
 |---|---|
-| Cero tests en el repo | `find tests/ -name "*.test.*" \| wc -l` → 0 |
+| Cero tests en el repo | `rg --files -g "*.test.*"` → sin salida = 0 |
 | Tests que dependen de orden de ejecución | `vitest run --shuffle` falla |
-| Sin teardown (datos sucios entre suites) | `rg "afterEach\|afterAll" tests/ -l \| wc -l` bajo vs total |
+| Sin teardown (datos sucios entre suites) | `rg -l -e afterEach -e afterAll tests/` bajo vs `rg --files -g "*.test.*"` total |
 | Mock de todo (incluyendo la BD en integración) | `rg "mock\|spy" tests/integration` → excesivo |
 | Credenciales reales en fixtures | `rg -i "password\|secret" tests/fixtures` → valores reales |
 | Tests que escuchan en un puerto fijo | `rg "listen\|\.port" tests/` |
-| Sin script de test en `package.json` | `rg "\"test\"" package.json` sin match |
+| Sin script de test en `package.json` | `rg '\x22test\x22' package.json` sin match |
 
 ## Solapamiento
 
 - `validacion-entrada-backend` — los schemas se testean con inputs válidos e inválidos.
-- `errores-respuestas-backend` — tests de integración verifican que el error handler responde con
-  la shape correcta y los códigos HTTP esperados.
+- `errores-respuestas-backend` — la integración verifica la shape de error y los códigos HTTP.
 - `config-env-backend` — la BD de test usa su propia `DATABASE_URL_TEST` en config.
 - `base-datos-conexion-backend` — el pool de test se cierra en `afterAll`.
-- `logging-ops-backend` — en tests el logger va en nivel `silent` para no ensuciar la salida;
-  el test del handler central spyea `logger.error` y verifica que se invoca con el error real.
+- `logging-ops-backend` — logger en nivel `silent` en tests; el handler central se spyea para
+  verificar que `logger.error` recibe el error real.

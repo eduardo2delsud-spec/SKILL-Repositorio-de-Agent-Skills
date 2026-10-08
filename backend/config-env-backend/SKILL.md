@@ -45,12 +45,12 @@ servidor **no arranca**. El `.env.example` es la fuente de truth documentada.
    `process.env` directo. Sin duplicar un mismo secreto en varios archivos.
 4. **`.env.example` completo.** Checklist por variable: **nombre · tipo · requerida (¿en qué
    ambiente?) · default · quién la lee**. `.env` local gitignored; cero secretos en repo.
-5. **Verificación final (obligatoria):**
+5. **Verificación (obligatoria):**
    ```bash
    # nadie más lee process.env
    rg "process\.env" src/ -l
    # defaults hardcodeados que esquivan el validador
-   rg '\|\|\s*"' src/config/
+   rg '\|\|\s*\x22' src/config/
    # claves usadas en el código vs declaradas en .env.example
    rg -o 'process\.env\.([A-Z_0-9]+)' src/ -r '$1' | sort -u
    ```
@@ -62,11 +62,11 @@ servidor **no arranca**. El `.env.example` es la fuente de truth documentada.
 
 | Anti-patrón | Detección |
 |---|---|
-| Secret con fallback hardcodeado (`JWT_SECRET \|\| "default"`) | `rg '\|\| *"' src/config/` |
+| Secret con fallback hardcodeado (`JWT_SECRET \|\| "default"`) | `rg '\|\| *\x22' src/config/` |
 | "Validación" que solo avisa y arranca igual | `console.warn` en el chequeo de env sin `process.exit` |
 | Lectores dispersos de `process.env` | `rg "process\.env" src/ -l` → más de 2 archivos |
-| API keys inline en el código | `rg -i "api[_-]?key\s*[:=]\s*['\"]" src/` |
-| Env de test con secretos reales trackeado | `git ls-files \| rg "\.env"` y revisar contenido |
+| API keys inline en el código | `rg -i "api[_-]?key\s*[:=]\s*[\x27\x22]" src/` |
+| Env de test con secretos reales trackeado | `git ls-files ".env*" "*.env"` y revisar contenido |
 | Conexiones con defaults que esquivan el validador | `rg "localhost\|process\.env" src/ -g "*db*" -g "*connection*"` |
 | Credenciales fijas en setup de tests | `rg -i "password\|secret" test/` |
 

@@ -1,6 +1,6 @@
 ---
 name: auth-frontend
-description: Complete authentication package for React SPAs (login, register, session, guards). Use when adding login, auth screens, route guards, token refresh, logout, or when auth flows are missing. Triggers: "login", "autenticacion", "guardar ruta", "sesion", "cerrar sesion", "registro", "recuperar contrase;a", "refresh token", "flujos de auth".
+description: Complete authentication package for React SPAs (login, register, session, guards). Use when adding login, auth screens, route guards, token refresh, logout, or when auth flows are missing. Triggers: "login", "autenticacion", "guardar ruta", "sesion", "cerrar sesion", "registro", "recuperar contraseña", "refresh token", "flujos de auth".
 ---
 
 # Auth Frontend — si hay login, el paquete completo
@@ -62,7 +62,7 @@ rg "isAuthenticated|token" src/pages
 |---|---|
 | Login sin registro ni recuperación | `ls src/pages` → solo `Login` |
 | Rutas protegidas chequeadas dentro de cada página | `rg "if \(!user" src/pages` → repetido |
-| Protección por ID de usuario hardcodeada en el front | `rg "userId === [0-9]|rol !== [0-9]" src/` → reglas de permiso que son del backend |
+| Protección por ID de usuario hardcodeada en el front | `rg "userId === [0-9]\|rol !== [0-9]" src/` → reglas de permiso que son del backend |
 | 403/401 manejado cerrando sesión sin distinguir causas | manejar 401 (sesión) y 403 (permiso) por separado |
 | Contraseña en `localStorage` o logueada | `rg -i "password" src/ \| rg "localStorage\|console"` |
 | Logout que no limpia stores/cache | revisar que el logout clear stores + query cache |

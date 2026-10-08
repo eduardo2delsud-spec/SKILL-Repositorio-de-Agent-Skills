@@ -70,7 +70,7 @@ rg "fetch\(|axios" src/components src/pages
 # stores haciendo HTTP
 rg "fetch\(|axios" src/store
 # imports entre pages (composición ilegal)
-rg "from ['\"].*\.\./pages/" src/pages
+rg "from [\x27\x22].*\.\./pages/" src/pages
 # estructura completa
 ls src/
 ```
@@ -84,10 +84,10 @@ Cero matches o justificación explícita.
 | Mezcla de estructura por feature y por tipo sin frontera | `ls src/` → coexisten `features/` y `components/` planos sin criterio |
 | `fetch`/`axios` inline en componentes | `rg "fetch\(" src/components src/pages` |
 | Un "data layer" viejo coexistiendo con el data fetching moderno | dos formas de llamar a la API en paralelo (servicios legacy + queries) |
-| Stores que hacen HTTP o render | `rg "fetch\(|useEffect" src/store` |
-| Páginas importándose entre sí | `rg "from ['\"].*pages/" src/pages` |
+| Stores que hacen HTTP o render | `rg "fetch\(\|useEffect" src/store` |
+| Páginas importándose entre sí | `rg "from [\x27\x22].*pages/" src/pages` |
 | Componentes globales de un solo uso acumulándose en `components/` | carpeta `components/` sin subcarpetas y en crecimiento |
-| Lógica de negocio (reglas, cálculos de dominio) en el front | `rg "if \(.*(rol|permiso|estado)" src/components` → reglas que pertenecen al backend |
+| Lógica de negocio (reglas, cálculos de dominio) en el front | `rg "if \(.*(rol\|permiso\|estado)" src/components` → reglas que pertenecen al backend |
 
 ## Solapamiento
 

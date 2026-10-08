@@ -63,7 +63,7 @@ rg "toLocaleDateString|toLocaleString|Intl\." src/ -g '!src/lib/**' -g '!src/uti
 # página de listado sin sync a URL
 rg "searchParams|useSearchParams" src/pages
 # accesibilidad del modal de info
-rg "aria-modal|role=\"dialog\"|Escape" src/components
+rg 'aria-modal|role=\x22dialog\x22|Escape' src/components
 # outline eliminado sin foco visible de reemplazo
 rg "outline:\s*none|outline:\s*0" src/ -g '!src/styles/**'
 # transiciones sin respetar reduced-motion (sin matches = falta)
@@ -81,7 +81,7 @@ rg "aria-live" src/ -c
 | Scroll infinito sin soporte de offset en el backend | revisar contrato del listado |
 | Fechas/monedas formateadas distinto en cada pantalla | `rg "toLocaleString" src/` con formatos distintos |
 | Changelog hardcodeado dentro del JSX del modal | `rg "CHANGELOG" src/` → datos en módulo, no en componente |
-| Modal sin `Escape`/focus trap | `rg "role=\"dialog\"" src/` sin manejo de teclado |
+| Modal sin `Escape`/focus trap | `rg 'role=\x22dialog\x22' src/` sin manejo de teclado |
 | `outline: none` sin foco visible de reemplazo | `rg "outline:\s*none" src/` |
 | Animaciones ignorando `prefers-reduced-motion` | `rg "prefers-reduced-motion" src/` → sin matches |
 | Cambio de página sin anuncio a lectores de pantalla | `rg "aria-live" src/` solo en toasts, no en listados |

@@ -99,13 +99,13 @@ Sin cierre explícito, connections quedan huérfanas tras cada restart/deploy.
 
 ```bash
 # queries fuera de db/repositories
-rg "pool\.query\|\.findOne\|\.findAll\|\.create\b" src/controllers src/routes
+rg "pool\.query|\.findOne|\.findAll|\.create\b" src/controllers src/routes
 # interpolación de strings en queries (SQL injection)
-rg "query\(\`\|query\(\".*\$\{" src/
+rg -e 'query\(\x60' -e 'query\(\x22.*\$\{' src/
 # pool sin cleanup en shutdown
-rg "pool\.end\|disconnect\|sequelize\.close" src/
+rg "pool\.end|disconnect|sequelize\.close" src/
 # múltiples pools creados
-rg "new Pool\|new Client\|createPool" src/ -l   # esperado: 1 archivo
+rg "new Pool|new Client|createPool" src/ -l   # esperado: 1 archivo
 ```
 
 ## Anti-patrones (cómo detectarlos)
@@ -115,7 +115,7 @@ rg "new Pool\|new Client\|createPool" src/ -l   # esperado: 1 archivo
 | Conexión nueva por request | `rg "new Pool\|new Client\|createConnection" src/` en controllers/routes |
 | Pool size excesivo (50+) | `rg "max:" src/db` → valor > 30 sin justificación |
 | `client.release()` faltante en transacciones | `rg "pool\.connect" src/ -A20` → buscar `finally.*release` |
-| SQL injection por interpolación | `rg "query\(\`.*\$\{" src/` |
+| SQL injection por interpolación | `rg "query\(\x60.*\$\{" src/` |
 | Migración editada post-producción | `git log --oneline -- src/db/migrations/` → cambios en archivos antiguos |
 | Queries directas en controllers | `rg "query\|findOne\|findAll" src/controllers` |
 | Sin cierre de pool en shutdown | `rg "SIGTERM\|SIGINT" src/` sin `pool.end` cercano |

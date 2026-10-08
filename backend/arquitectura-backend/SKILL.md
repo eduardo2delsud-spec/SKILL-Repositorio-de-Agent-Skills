@@ -36,7 +36,7 @@ src/
 | Capa | Contenido | Puede importar | NO puede importar |
 |---|---|---|---|
 | `routes/` | registro de endpoints, middlewares de ruta | schemas de su módulo, middleware | services, db, config |
-| `controllers/` | HTTP: leer req, llamar service, armar res | services de su dominio, middleware | db, config, express en services |
+| `controllers/` | HTTP: leer req, llamar service, armar res | services de su dominio, middleware | db, config |
 | `services/` | lógica de negocio, transacciones | db, utils, otros services del dominio | express/`req`/`res`, routes |
 | `db/` | pool, queries base, migraciones | config | controllers, services |
 | `config/` | lectura/validación de env | — | db, services (nunca al revés) |
@@ -72,18 +72,19 @@ Reglas derivadas:
 
 ```bash
 # services conociendo HTTP (violación: capa de negocio importando express)
-rg "from ['\"]express" src/services src/modules/*/service*
+rg "from [\x27\x22]express" src/services src/modules/*/service*
 # controllers tocando la BD directo (debería pasar por el service)
-rg "from ['\"].*(db/|drizzle|sequelize)" src/controllers src/modules/*/controller*
+rg "from [\x27\x22].*(db/|drizzle|sequelize)" src/controllers src/modules/*/controller*
 # config fuera del módulo config
 rg "process\.env" src/ -l
 # utils/middleware con dependencias de dominio o db
-rg "from ['\"].*(db/|modules/)" src/utils src/middleware
-# imports cruzados entre módulos
-rg "from ['\"].*modules/(?!<actual>)" src/modules -g '!**/node_modules/**'
+rg "from [\x27\x22].*(db/|modules/)" src/utils src/middleware
+# imports que referencian modules/ desde dentro de modules/
+rg -n "from [\x27\x22].*modules/" src/modules -g '!**/node_modules/**'
 ```
 
-Cero matches en cada línea, o justificación explícita.
+Cero matches en cada línea; en el último comando, revisar que cada hit apunte al **propio
+módulo** o a `utils/` compartidos (apuntar a otro módulo = violación, justificarla).
 
 ## Anti-patrones (cómo detectarlos)
 
@@ -91,10 +92,10 @@ Cero matches en cada línea, o justificación explícita.
 |---|---|
 | Mezcla de estructura por capa y por dominio en el mismo repo | `ls src/` → coexisten `controllers/` planos y `modules/` sin frontera |
 | Lógica de negocio en routes o middleware | `rg "await .*service\.\|db\." src/middleware src/routes` |
-| Services que conocen HTTP (`req`/`res`) | `rg "req\.|res\." src/services src/modules/*/service*` |
-| Controllers que construyen SQL o transacciones | `rg "sql\`\|transaction\(" src/controllers src/modules/*/controller*` |
+| Services que conocen HTTP (`req`/`res`) | `rg "req\.\|res\." src/services src/modules/*/service*` |
+| Controllers que construyen SQL o transacciones | `rg "sql\x60\|transaction\(" src/controllers src/modules/*/controller*` |
 | `process.env` leído desde cualquier archivo | `rg "process\.env" src/ -l` → más de 1-2 archivos |
-| Barrel files (`index.ts` con re-exports) que generan ciclos | `rg "from ['\"]\./index" src/` + errores de import circular |
+| Barrel files (`index.ts` con re-exports) que generan ciclos | `rg "from [\x27\x22]\./index" src/` + errores de import circular |
 | Archivos nuevos "donde queda más cómodo" | revisar que el PR respete la tabla de dependencias |
 
 ## Solapamiento

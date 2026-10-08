@@ -34,8 +34,8 @@ Variables con prefijo `VITE_`, documentadas en `.env.example`.
    rg "import\.meta\.env\.([A-Z_]+)" src/ -or '$1' | sort -u   # deben empezar con VITE_
    # secretos obvios en el código fuente
    rg -i "api[_-]?key|secret|password|private[_-]?key" src/
-   # .env.example presente y trackeado
-   ls -a | rg "^\.env"
+   # .env.example presente y trackeado (incluso gitignored)
+   rg --files --hidden --no-ignore -g ".env*"
    ```
 
 ## Anti-patrones (cómo detectarlos)

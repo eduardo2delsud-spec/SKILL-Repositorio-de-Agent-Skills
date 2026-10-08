@@ -108,7 +108,7 @@ las categorías llevan `SKILL.md` propias), o copiar las carpetas individuales q
 
 1. Crear `<categoría>/<nombre-kebab-case>/SKILL.md` siguiendo
    [`crear-skill-global`](global/crear-skill-global/SKILL.md) (intención → borrador →
-   verificación → iteración).
+   iteración → verificación).
 2. Seguir el formato y las convenciones de [`AGENTS.md`](AGENTS.md) (frontmatter, secciones,
    genérica, ≤ 150 líneas).
 3. Correr la verificación de `AGENTS.md` (sin referencias externas, `name` = carpeta, tamaño).

@@ -82,7 +82,7 @@ const valid = await bcrypt.compare(password, user.hash); // login
 
 ```bash
 # secretos en config (no hardcodeados)
-rg "jwt\.sign\|jwt\.verify" src/ -A2 | rg -v "config\."
+rg "jwt\.sign|jwt\.verify" src/ -A2 | rg -v "config\."
 # tokens sin expiración
 rg "expiresIn" src/ -c   # debe haber al menos 1 por cada sign
 # passwords en texto plano
@@ -95,7 +95,7 @@ rg "jwt\.verify" src/ -l  # esperado: solo middleware/verifyToken
 
 | Anti-patrón | Detección |
 |---|---|
-| Secret hardcodeado (`"mysecret"`) | `rg "jwt\.(sign\|verify).*['\"]" src/` → string literal como secret |
+| Secret hardcodeado (`"mysecret"`) | `rg "jwt\.(sign\|verify).*[\x27\x22]" src/` → string literal como secret |
 | Token sin expiración | `rg "jwt\.sign" src/` sin `expiresIn` en options |
 | Refresh token sin rotación (reutilizable infinitamente) | Leer flujo de `/auth/refresh`: si no invalida el anterior, es reutilizable |
 | `localStorage` para tokens | `rg "localStorage.*(token\|jwt\|access)" src/` |

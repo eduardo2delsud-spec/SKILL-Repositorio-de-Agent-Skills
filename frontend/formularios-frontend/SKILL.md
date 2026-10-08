@@ -50,10 +50,12 @@ description: Form handling and validation (Zod) for React SPAs, synced with the 
    rg "aria-invalid|aria-describedby" src/ -c
    # validación manual duplicada fuera de Zod
    rg "if \(.*\.value\s*===\s*''" src/components
-   # doble submit sin bloqueo
-   rg "onSubmit" src/ -c  vs  rg "isSubmitting|disabled=\{" src/ -c
+   # doble submit sin bloqueo (bloqueos ≥ submits)
+   rg "onSubmit" src/ -c
+   rg "isSubmitting|disabled=\{" src/ -c
    # inputs sin autoComplete (formularios con campos de identidad/credenciales)
-   rg "<input" src/ -g '!*.test.*' -c  vs  rg "autoComplete" src/ -c
+   rg "<input" src/ -g '!*.test.*' -c
+   rg "autoComplete" src/ -c
    # validación en cada keystroke (onChange) sin touched/blur
    rg "onChange.*setErrors|validate.*onChange" src/
    ```
@@ -69,7 +71,7 @@ description: Form handling and validation (Zod) for React SPAs, synced with the 
 | Fecha +1 día por zona horaria en la serialización | parse/serialize dispersos: `rg "new Date\(" src/` |
 | Doble envío (doble click = doble registro) | submit sin bloqueo `disabled/isSubmitting` |
 | Campos no controlados que pierden valores en error | probar fallo de red y revisar que el form conserva lo tipeado |
-| Input de email/contraseña sin `autoComplete` (sin autofill ni gestor de contraseñas) | `rg "type=\"email\"\|type=\"password\"" src/ -l` vs `rg "autoComplete" src/` |
+| Input de email/contraseña sin `autoComplete` (sin autofill ni gestor de contraseñas) | `rg -e 'type=\x22email\x22' -e 'type=\x22password\x22' src/ -l` vs `rg "autoComplete" src/` |
 | Errores que parpadean con cada tecla (validación en `onChange`) | `rg "onChange" src/` con validación dentro sin `touched`/blur |
 
 ## Solapamiento

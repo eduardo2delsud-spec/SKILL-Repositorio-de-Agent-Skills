@@ -46,9 +46,9 @@ con retry**, y existe **un toast global accesible**; los errores de API avisán 
 # páginas con datos sin estado de error
 rg "useQuery" src/ -l     # vs páginas que renderizan error/retry
 # aria en los toasts
-rg "aria-live|role=\"status\"|role=\"alert\"" src/
+rg 'aria-live|role=\x22status\x22|role=\x22alert\x22' src/
 # spinners genéricos donde cabría skeleton
-rg "Spinner\|loader" src/pages
+rg "Spinner|loader" src/pages
 # estados manuales con useEffect+useState para datos (debería ser query)
 rg "useEffect" src/ -c
 # loading manual con boolean donde debería ir useTransition

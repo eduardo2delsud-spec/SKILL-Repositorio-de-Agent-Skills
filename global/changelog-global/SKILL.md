@@ -45,7 +45,7 @@ rg '^- \*\*(Added|Changed|Fixed|Removed|Maintenance)\*\*: [^*]' CHANGELOG.md
 # fecha con llaves literales (debe dar 0)
 rg '\[\{\d{4}' CHANGELOG.md
 # emojis (debe dar 0)
-rg -P '[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}]' CHANGELOG.md
+rg '[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}]' CHANGELOG.md
 ```
 
 ## Anti-patrones (cómo detectarlos)
@@ -55,7 +55,7 @@ rg -P '[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}]' CHANGELOG.md
 | Entrada sin fecha al final | los dos conteos de `rg -c` de arriba dan distinto |
 | Fecha con llaves literales `[{2026-01-01}]` | `rg '\[\{\d{4}' CHANGELOG.md` → 0 |
 | Categoría sin negrita de título | `rg '^- \*\*(Added\|Changed\|Fixed\|Removed\|Maintenance)\*\*: [^*]' CHANGELOG.md` → 0 |
-| Emojis en entradas | `rg -P '[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}]' CHANGELOG.md` → 0 |
+| Emojis en entradas | `rg '[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}]' CHANGELOG.md` → 0 |
 | Descripción no auto-contenida ("fix", "ajuste" sin qué ni dónde) | `rg -i '^- \*\*Fixed\*\*: \*\*[^*]+\*\*\.\s*(fix\|arreglo\|ajuste)' CHANGELOG.md` → 0 |
 | Orden ascendente (la versión vieja arriba) | `rg '^## \[' CHANGELOG.md` → la primera fecha debe ser la más reciente |
 | Código mergeado sin entrada | `git diff --name-only main...HEAD` y verificar cada archivo: `rg "<archivo>" CHANGELOG.md` |

@@ -45,7 +45,7 @@ SKILL/
 ## Convenciones al crear o editar una skill
 
 > Para crear o editar una skill, seguir [`global/crear-skill-global`](global/crear-skill-global/SKILL.md)
-> (intención → borrador → verificación → iteración); abajo está el resumen normativo.
+> (intención → borrador → iteración → verificación); abajo está el resumen normativo.
 
 1. **Formato:** carpeta kebab-case que contiene `SKILL.md`. Frontmatter con `name`
    (**igual al nombre de la carpeta**) y `description`.
@@ -68,8 +68,20 @@ SKILL/
    6. `## Solapamiento` (solo skills de ESTE repo: hermanas con las que se cruza)
 5. **Tamaño:** ≤ 150 líneas por skill (máximo absoluto 500) y < 5k tokens. Si algo no cabe,
    separamos en otra skill; no se usa `references/` a esta escala.
-6. **Comandos concretos y estables:** `rg`/`git` copy-pasteables. Nada de rutas de proyectos
-   concretos (cambian); sí rutas convencionales de ejemplo (`src/config`, `src/middlewares`).
+6. **Comandos concretos, portables y estables:** `rg`/`git` copy-pasteables. Nada de rutas de
+   proyectos concretos (cambian); sí rutas convencionales de ejemplo (`src/config`, `src/middlewares`).
+   - **Bash + PowerShell:** los comandos deben correr en ambos shells. Patrones de `rg` que
+     matchean una comilla doble se escriben con `\x22` y entre comillas simples
+     (`rg 'role=\x22dialog\x22'`): el `"` literal en el argv rompe el paso de argumentos
+     nativo de PowerShell 5.1 (lo mangla silenciosamente, sin error). `[\x27\x22]` empareja
+     ambos tipos de comilla; `-e` repetido en vez de `|` alternativo cuando conviene;
+     pathspecs de git (`git ls-files "*.log"`) en vez de pipiar a `rg`; `rg --files` en vez
+     de `find`; `rg -c '^'` en vez de `wc -l`; `sort -u` está permitido. **Prohibidos**
+     `find`, `wc`, `tail`, `ls -a`, `basename`, `Measure-Object` y los lookarounds
+     (`(?!...)`: el engine default de rg no los soporta — encadenar dos `rg` con `| rg -v`).
+   - **Escapes en tablas:** dentro de una celda de tabla, `\|` es escape de markdown (evita
+     partir la tabla) y se renderiza como `|`: **al ejecutar un comando copiado de una celda,
+     leer `\|` como `|`**. En fences de código va `|` crudo (un `\|` ahí es pipe literal).
 7. **Omitir lo que el agente ya sabe** (qué es HTTP, qué es Express); incluir solo lo no
    obvio del dominio: convenciones, trampas y criterios de verificación.
    - Explicar el **porqué** de cada regla; un muro de `MAYÚS`/`PROHIBIDO` sin razón se
@@ -93,7 +105,7 @@ rg -i "Reglas/|Patrones/|Brain/|Proyectos/|portafolio|OpenBrain" <carpeta-de-la-
 # 2) name = carpeta
 rg "^name:" <carpeta>/SKILL.md
 # 3) tamaño
-wc -l <carpeta>/SKILL.md    # objetivo ≤ 150
+rg -c '^' <carpeta>/SKILL.md    # objetivo ≤ 150
 # 4) changelog registra el cambio
 rg "<nombre-de-la-skill>" CHANGELOG.md
 ```

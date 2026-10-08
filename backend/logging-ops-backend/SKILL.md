@@ -55,9 +55,9 @@ el repo no guarda archivos de log.
 
 | Anti-patrón | Detección |
 |---|---|
-| Logger configurado pero casi nadie lo usa | `rg "logger\." src/ -l \| wc -l` vs total de archivos |
+| Logger configurado pero casi nadie lo usa | `rg -l "logger\." src/` pocos vs `rg --files src/` total |
 | Dos implementaciones/configuraciones de logger distintas | `rg -l "createLogger" src/` → más de un módulo |
-| Logs commiteados al repo | `git ls-files \| rg "\.log$"` |
+| Logs commiteados al repo | `git ls-files "*.log"` |
 | `console.*` en producción | `rg "console\." src/ -g '!**/server*'` |
 | Nivel de logger inexistente o inefectivo | `rg "logger\.debug" src/` + revisar `minLevel` de la config |
 | Sin handler que loguee errores centralmente | `rg "logger\.error" src/*errorHandler*` sin matches |
