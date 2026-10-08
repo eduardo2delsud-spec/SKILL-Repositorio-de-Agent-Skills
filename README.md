@@ -12,7 +12,8 @@ SKILL/
 ├── CHANGELOG.md   # historial de cambios (se actualiza en cada alta/modificación/baja)
 ├── backend/       # skills de backend (8 activas)
 ├── frontend/      # skills de frontend (7 activas)
-└── devops/        # reservada
+├── devops/        # reservada
+└── global/        # skills globales front+back (1 activa)
 ```
 
 ## Catálogo
@@ -42,6 +43,14 @@ SKILL/
 | [`formularios-frontend`](frontend/formularios-frontend/SKILL.md) | "formularios", "validación", "zod", "errores inline" | Schema Zod sincronizado con el contrato, errores inline, trampas de fechas |
 | [`ui-bloques-frontend`](frontend/ui-bloques-frontend/SKILL.md) | "paginación", "design tokens", "tema oscuro", "changelog" | Paginación en URL, tokens/tema, formateo Intl, modal de info accesible |
 
+### global/
+
+Skills transversales: aplican por igual a backend y frontend.
+
+| Skill | Dispara con | Qué resuelve |
+|---|---|---|
+| [`changelog-global`](global/changelog-global/SKILL.md) | "changelog", "historial de cambios", "agregar entrada", "unreleased", "liberar versión" | 5 categorías, entradas auto-contenidas con `Files`, fecha al final, orden inverso, cierre de versión |
+
 ## Orden de lectura recomendado
 
 Para armar un proyecto desde cero con estas skills, seguir la cadena de dependencias — cada
@@ -52,6 +61,9 @@ eslabón asume los anteriores:
 
 **Frontend:**
 `arquitectura-frontend` → `config-env-frontend` → `auth-frontend` → `data-fetching-frontend` → `formularios-frontend` → `estados-toast-frontend` → `ui-bloques-frontend`
+
+**Global (ambos lados):** `changelog-global` — cada cambio funcional se registra en el
+`CHANGELOG.md` del servicio en el mismo gesto, sin importar de qué lado sea.
 
 Las conexiones exactas entre eslabones están en la sección `## Solapamiento` de cada skill.
 

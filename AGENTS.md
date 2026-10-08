@@ -3,7 +3,7 @@
 ## Qué es este proyecto
 
 Colección **independiente** de *agent skills* (formato `SKILL.md`) organizada por categoría
-(`backend/`, `frontend/`, `devops/`). Es un proyecto **separado de todo lo demás**: no depende
+(`backend/`, `frontend/`, `devops/`, `global/`). Es un proyecto **separado de todo lo demás**: no depende
 del vault OpenBrainCode, ni de otros repos, ni de sus notas/reglas/proyectos.
 
 **Consecuencia obligatoria:** las skills de este repo son **autocontenidas y genéricas**.
@@ -35,7 +35,9 @@ SKILL/
 │   ├── estados-toast-frontend/SKILL.md
 │   ├── formularios-frontend/SKILL.md
 │   └── ui-bloques-frontend/SKILL.md
-└── devops/                # reservada (vacía)
+├── devops/                # reservada (vacía)
+└── global/                # skills globales: aplican a backend y frontend (1)
+    └── changelog-global/SKILL.md
 ```
 
 ## Convenciones al crear o editar una skill
@@ -106,6 +108,14 @@ rg "<nombre-de-la-skill>" CHANGELOG.md
 | `estados-toast-frontend` | frontend | 4 estados de vista + toast global accesible |
 | `formularios-frontend` | frontend | Validación Zod sincronizada con el contrato, errores inline |
 | `ui-bloques-frontend` | frontend | Paginación en URL, tokens/tema, Intl, modal changelog+manual |
+
+### global/
+
+Skills transversales: aplican por igual a backend y frontend.
+
+| Skill | Categoría | Para qué |
+|---|---|---|
+| `changelog-global` | global | Formato exigente del CHANGELOG: 5 categorías, entradas auto-contenidas, fecha al final, Unreleased |
 
 ## Qué NO hacer
 
