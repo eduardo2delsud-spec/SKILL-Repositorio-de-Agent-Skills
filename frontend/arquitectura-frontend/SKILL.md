@@ -91,7 +91,10 @@ Cero matches o justificación explícita.
 
 ## Solapamiento
 
-- **Base de las hermanas:** `auth-frontend`, `data-fetching-frontend`, `estados-toast-frontend`,
-  `formularios-frontend` y `ui-bloques-frontend` asumen este layout; ésta lo define y audita.
+- **Base de las hermanas:** `auth-frontend`, `config-env-frontend`, `data-fetching-frontend`,
+  `estados-toast-frontend`, `formularios-frontend` y `ui-bloques-frontend` asumen este layout;
+  ésta lo define y audita.
+- `config-env-frontend` — acá solo vive dónde está el módulo de config (punto de entrada);
+  qué variables existe y quién las consume lo define esa hermana.
 - `data-fetching-frontend` — reglas concretas de `api/` y queries; acá solo dónde vive y qué
   puede importar.

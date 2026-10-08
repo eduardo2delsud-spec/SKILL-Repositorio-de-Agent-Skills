@@ -68,6 +68,8 @@ rg "localStorage" src/hooks src/components
 ## Solapamiento
 
 - `arquitectura-frontend` — dónde viven `api/` y `hooks/` y qué importa qué.
+- `config-env-frontend` — `VITE_API_URL` se lee una sola vez en el módulo de config y se
+  inyecta al cliente; ningún componente toca `import.meta.env` directo.
 - `auth-frontend` — el interceptor remueve la sesión ante 401 y dispara refresh.
 - `estados-toast-frontend` — los estados de cada query (skeleton/empty/error) y errores → toast.
 - `formularios-frontend` — mutations de los formularios y sus errores inline.

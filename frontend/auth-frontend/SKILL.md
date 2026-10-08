@@ -71,6 +71,8 @@ rg "isAuthenticated|token" src/pages
 ## Solapamiento
 
 - `data-fetching-frontend` — cómo el cliente HTTP adjunta el token y remueve la sesión ante 401.
+- `config-env-frontend` — la base de los endpoints de auth (`VITE_API_URL`) sale de la config
+  de entrada; los tokens no son env, se manejan en runtime/sesión.
 - `estados-toast-frontend` — loading/error de los formularios de auth; errores graves → toast.
 - `formularios-frontend` — validación de los formularios de login/registro/recuperación.
 - `arquitectura-frontend` — `api/auth.ts` + `store/auth` viven donde dice la estructura.
