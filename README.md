@@ -13,7 +13,7 @@ SKILL/
 ├── backend/       # skills de backend (8 activas)
 ├── frontend/      # skills de frontend (7 activas)
 ├── devops/        # reservada
-└── global/        # skills globales front+back (2 activas)
+└── global/        # skills globales front+back (3 activas)
 ```
 
 ## Catálogo
@@ -50,6 +50,7 @@ Skills transversales: aplican por igual a backend y frontend.
 | Skill | Dispara con | Qué resuelve |
 |---|---|---|
 | [`changelog-global`](global/changelog-global/SKILL.md) | "changelog", "historial de cambios", "agregar entrada", "unreleased", "liberar versión" | 5 categorías, entradas auto-contenidas con `Files`, fecha al final, orden inverso, cierre de versión |
+| [`crear-skill-global`](global/crear-skill-global/SKILL.md) | "crear skill", "nueva skill", "editar skill", "SKILL.md", "triggers" | Intención → borrador con estructura fija → description anti-trap → suite de verificación → iteración con uso real |
 | [`generador-estimaciones-global`](global/generador-estimaciones-global/SKILL.md) | "crear estimación", "estimar horas", "tiempos de desarrollo", "cuánto tarda", "estimación QA" | Docs HTML por rol con horas prellenadas (propuesta del agente), tabla Tarea × Horas, subtotales, total y semanas; listo para imprimir a PDF |
 
 ## Orden de lectura recomendado
@@ -67,6 +68,8 @@ eslabón asume los anteriores:
 `CHANGELOG.md` del servicio en el mismo gesto, sin importar de qué lado sea.
 `generador-estimaciones-global` — cuando pidan tiempos de features, genera los documentos
 HTML por rol con las horas propuestas, para ajustar antes de imprimir.
+`crear-skill-global` — toda alta o edición de skill pasa por su checklist (intención,
+borrador, verificación, iteración).
 
 Las conexiones exactas entre eslabones están en la sección `## Solapamiento` de cada skill.
 
@@ -103,7 +106,9 @@ las categorías llevan `SKILL.md` propias), o copiar las carpetas individuales q
 
 ## Agregar una skill
 
-1. Crear `<categoría>/<nombre-kebab-case>/SKILL.md`.
+1. Crear `<categoría>/<nombre-kebab-case>/SKILL.md` siguiendo
+   [`crear-skill-global`](global/crear-skill-global/SKILL.md) (intención → borrador →
+   verificación → iteración).
 2. Seguir el formato y las convenciones de [`AGENTS.md`](AGENTS.md) (frontmatter, secciones,
    genérica, ≤ 150 líneas).
 3. Correr la verificación de `AGENTS.md` (sin referencias externas, `name` = carpeta, tamaño).

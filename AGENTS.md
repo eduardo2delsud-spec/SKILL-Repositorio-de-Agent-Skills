@@ -36,18 +36,25 @@ SKILL/
 │   ├── formularios-frontend/SKILL.md
 │   └── ui-bloques-frontend/SKILL.md
 ├── devops/                # reservada (vacía)
-└── global/                # skills globales: aplican a backend y frontend (2)
+└── global/                # skills globales: aplican a backend y frontend (3)
     ├── changelog-global/SKILL.md
+    ├── crear-skill-global/SKILL.md
     └── generador-estimaciones-global/SKILL.md
 ```
 
 ## Convenciones al crear o editar una skill
+
+> Para crear o editar una skill, seguir [`global/crear-skill-global`](global/crear-skill-global/SKILL.md)
+> (intención → borrador → verificación → iteración); abajo está el resumen normativo.
 
 1. **Formato:** carpeta kebab-case que contiene `SKILL.md`. Frontmatter con `name`
    (**igual al nombre de la carpeta**) y `description`.
 2. **Description = qué + cuándo + triggers.** Imperativa, en tercera persona, con las palabras
    exactas que el usuario tipea, terminando en `Triggers: "palabra", "otra palabra"`.
    Ejemplo: `description: ... Use when ... Triggers: "agregar variable de entorno", "JWT_SECRET".`
+   La description **solo dispara** (*Use when* + triggers, "pushy"): **nunca resume el
+   flujo/workflow** de la skill — si la description describe los pasos, el agente cree que ya
+   la conoce y saltea el cuerpo entero (description-trap).
 3. **Genérica:** 0 menciones a proyectos, vault, incidentes pasados ni rutas ajenas.
    Los anti-patrones van con columna **Detección** (comando `rg`/`git` reproducible), nunca
    con evidencia de un proyecto concreto.
@@ -65,6 +72,12 @@ SKILL/
    concretos (cambian); sí rutas convencionales de ejemplo (`src/config`, `src/middlewares`).
 7. **Omitir lo que el agente ya sabe** (qué es HTTP, qué es Express); incluir solo lo no
    obvio del dominio: convenciones, trampas y criterios de verificación.
+   - Explicar el **porqué** de cada regla; un muro de `MAYÚS`/`PROHIBIDO` sin razón se
+     cumple de letra y se viola en espíritu.
+   - Los **gotchas** van en el cuerpo de la skill (si el agente no los lee antes de caer en
+     la trampa, no existen); no se externalizan.
+   - Cuando el output tiene forma fija, incluir la **plantilla concreta** (ejemplo real),
+     no una prosa que la describa.
 8. **Changelog obligatorio:** toda **alta, modificación o eliminación** de una skill — o cambio
    de convenciones/docs del repo — se registra en [`CHANGELOG.md`](CHANGELOG.md) **en el mismo
    gesto**, siguiendo su **Guía de uso** y su **Formato EXIGENTE** (categorías `Added` /
@@ -117,6 +130,7 @@ Skills transversales: aplican por igual a backend y frontend.
 | Skill | Categoría | Para qué |
 |---|---|---|
 | `changelog-global` | global | Formato exigente del CHANGELOG: 5 categorías, entradas auto-contenidas, fecha al final, Unreleased |
+| `crear-skill-global` | global | Alta/edición de skills: intención, borrador con estructura fija, description anti-trap, suite de verificación, iteración |
 | `generador-estimaciones-global` | global | Docs HTML por rol (backend/frontend/QA/resumen) con horas prellenadas, subtotales, total y proyección en semanas |
 
 ## Qué NO hacer

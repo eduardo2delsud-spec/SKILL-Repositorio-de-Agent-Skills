@@ -19,10 +19,15 @@ con retry**, y existe **un toast global accesible**; los errores de API avisán 
 ### 1. Los 4 estados de toda vista con datos
 
 1. **Loading** — skeleton/esqueleto con la forma del contenido (no spinner genérico cuando la
-   forma se conoce).
+   forma se conoce). Loading que **bloquea la interacción** (cambio de filtro, submit) va con
+   `useTransition`: la vista vieja se queda visible y el nuevo estado "pendiente" — sin
+   booleano `setLoading` a mano ni parpadeo a pantalla vacía.
 2. **Contenido** — la vista real.
 3. **Empty state** — mensaje + acción orientativa ("No hay resultados", botón a crear).
 4. **Error con retry** — mensaje claro + botón **Reintentar** (nunca vista en blanco).
+
+- Búsqueda/filtro sobre lista ya cargada: el input y la lista pesada con `useDeferredValue`
+  (UI responsiva mientras el filtrado corre en el siguiente render).
 
 ### 2. Toast global
 
@@ -46,6 +51,10 @@ rg "aria-live|role=\"status\"|role=\"alert\"" src/
 rg "Spinner\|loader" src/pages
 # estados manuales con useEffect+useState para datos (debería ser query)
 rg "useEffect" src/ -c
+# loading manual con boolean donde debería ir useTransition
+rg "setLoading|setIsLoading" src/
+# búsqueda de lista pesada sin defer
+rg "filter\(" src/ -g '!*.test.*' -l
 ```
 
 Revisión funcional: en cada lista/principal — probar con API caída (error+retry), sin datos
@@ -62,6 +71,8 @@ Revisión funcional: en cada lista/principal — probar con API caída (error+re
 | Toast sin ARIA (inaccesible) | `rg "aria-live" src/` → sin matches |
 | Auto-dismiss sin transición de salida | revisar animación de cierre del toast |
 | Errores de formulario mostrados solo como toast (se va antes de leer) | errores de campo → inline, no toast |
+| Booleano `setLoading` a mano en vez de `useTransition` | `rg "setLoading" src/` |
+| Filtro de lista que congela el input en cada tecla | input de búsqueda sin `useDeferredValue` |
 
 ## Solapamiento
 

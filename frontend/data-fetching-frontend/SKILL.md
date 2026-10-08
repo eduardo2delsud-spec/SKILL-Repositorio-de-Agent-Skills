@@ -33,14 +33,27 @@ description: Centralized HTTP client per feature plus TanStack Query for React f
   mutation cambia `['recurso']`, invalida `['recurso']`.
 - Paginación con query params en la key para que cada página sea cacheada aparte.
 
-### 3. Un solo data layer
+### 3. Sin waterfalls, con cancelación
+
+- **Anti-waterfall**: nunca dos `await` secuenciales de la API en el mismo efecto/carga — si
+  son independientes, `Promise.all([...])`; si dependen, el segundo dentro del `.then` de la
+  query que lo alimenta (o derive con `select`). Un waterfall multiplica el tiempo de carga
+  por cada salto.
+- **Cancelación**: pasar `signal` del `AbortSignal` de la query al `fetch`/`axios` — una query
+  desmontada o cambiada cancela la request vieja en vez de resolver tarde y pisar datos
+  nuevos (race condition silenciosa).
+- **Prefetch**: precargar al hover/focus de un link o al entrar a la ruta padre los datos de
+  la ruta hija pesada (`queryClient.prefetchQuery`); el viaje se siente instantáneo sin
+  waterfalls de navegación.
+
+### 4. Un solo data layer
 
 - Si conviven una capa de servicios legacy ("data layer") y queries, **migrar y eliminar** la
   capa vieja en la misma tarea — nunca dos formas de llamar a la API en paralelo.
 - Regla de migración: mover llamada → hook con query → borrar el servicio viejo → verificar
   consumidores.
 
-### 4. Verificación (obligatoria)
+### 5. Verificación (obligatoria)
 
 ```bash
 # fetch/axios fuera de api/ (violación)
@@ -51,6 +64,9 @@ rg "queryKey" src/ -c
 rg "useQuery|useMutation" src/ -l   # vs archivos de servicios/manuales
 # token leído fuera del cliente
 rg "localStorage" src/hooks src/components
+# requests sin cancelar (awaits encadenados en el mismo efecto / fetch sin signal)
+rg "AbortController|signal" src/api -l
+rg -U "await.*\n.*await" src/hooks -g '!*.test.*'
 ```
 
 ## Anti-patrones (cómo detectarlos)
@@ -64,6 +80,8 @@ rg "localStorage" src/hooks src/components
 | Estado de servidor copiado a un store (duplicado con cache) | `rg "setItems\|setList" src/store` con datos que vienen de la API |
 | Loading/error resueltos con `useEffect` + `useState` manuales | `rg "useEffect" src/` + `setState` de datos remotos |
 | Token adjuntado en cada llamada en vez de interceptor | `rg "Authorization" src/ -g '!src/api/**'` |
+| Waterfall: `await` encadenados de la API en el mismo efecto | `rg -U "await.*\n.*await" src/hooks` |
+| Requests sin cancelar → datos viejos pisando nuevos al navegar rápido | `rg "AbortController\|signal" src/api` → sin matches |
 
 ## Solapamiento
 

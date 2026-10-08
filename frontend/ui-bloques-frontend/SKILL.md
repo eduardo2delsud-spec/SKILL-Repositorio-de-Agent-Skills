@@ -23,6 +23,9 @@ central y el icono "i" con changelog + manual — implementados **una vez**, reu
 - Scroll infinito solo si el backend soporta offset/contador; si no, paginación.
 - **Estado de página sincronizado a la URL** (query param `?page=`): compartible y
   sobrevive al reload. Restaurar al entrar.
+- **Resultado del listado anunciado**: región `aria-live="polite"` con el resumen
+  ("12 resultados, página 2 de 5") — al cambiar de página/filtrar, lectores de pantalla
+  se enteran sin mover el foco.
 
 ### 2. Design tokens + tema
 
@@ -30,6 +33,11 @@ central y el icono "i" con changelog + manual — implementados **una vez**, reu
   fuente de verdad.
 - Tema claro/oscuro **por token** (variable/objeto temático), nunca `#000` suelto.
 - **Prohibido** colores/valores hardcodeados fuera de tokens.
+- **`:focus-visible` es un token**: estilo de foco visible definido con el resto (nunca
+  `outline: none` sin reemplazo) — el foco de teclado se ve en toda la app.
+- **`prefers-reduced-motion`**: respetar la media query desactivando/encurtiendo
+  transiciones y animaciones no esenciales; las transiciones de UI (modal, toast) van por
+  token de duración, no valores sueltos.
 
 ### 3. Formateo de locales
 
@@ -56,6 +64,12 @@ rg "toLocaleDateString|toLocaleString|Intl\." src/ -g '!src/lib/**' -g '!src/uti
 rg "searchParams|useSearchParams" src/pages
 # accesibilidad del modal de info
 rg "aria-modal|role=\"dialog\"|Escape" src/components
+# outline eliminado sin foco visible de reemplazo
+rg "outline:\s*none|outline:\s*0" src/ -g '!src/styles/**'
+# transiciones sin respetar reduced-motion (sin matches = falta)
+rg "prefers-reduced-motion" src/
+# listados dinámicos sin anuncio a lectores de pantalla (sin matches = falta)
+rg "aria-live" src/ -c
 ```
 
 ## Anti-patrones (cómo detectarlos)
@@ -68,6 +82,9 @@ rg "aria-modal|role=\"dialog\"|Escape" src/components
 | Fechas/monedas formateadas distinto en cada pantalla | `rg "toLocaleString" src/` con formatos distintos |
 | Changelog hardcodeado dentro del JSX del modal | `rg "CHANGELOG" src/` → datos en módulo, no en componente |
 | Modal sin `Escape`/focus trap | `rg "role=\"dialog\"" src/` sin manejo de teclado |
+| `outline: none` sin foco visible de reemplazo | `rg "outline:\s*none" src/` |
+| Animaciones ignorando `prefers-reduced-motion` | `rg "prefers-reduced-motion" src/` → sin matches |
+| Cambio de página sin anuncio a lectores de pantalla | `rg "aria-live" src/` solo en toasts, no en listados |
 
 ## Solapamiento
 

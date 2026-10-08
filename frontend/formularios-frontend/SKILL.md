@@ -22,18 +22,26 @@ description: Form handling and validation (Zod) for React SPAs, synced with the 
 2. **Errores inline por campo**: mensaje bajo cada campo (`aria-describedby` + `aria-invalid`);
    errores de negocio del backend (409, reglas) también inline en el campo o formulario
    relacionado — **no solo toast** (el toast se va antes de leerlo).
-3. **Submit consistente**: botón deshabilitado mientras envía, doble submit bloqueado,
+3. **Validar en blur, no en cada tecla**: mostrar el error del campo cuando sale el foco
+   (`touched`), no al primer carácter — el usuario ve el error cuando ya terminó de tipear,
+   no cuando empieza. Validación en submit para el resto.
+4. **Atributos nativos reales**: `autoComplete` honesto según el campo (`name`, `email`,
+   `current-password`, `new-password`, `tel`, `street-address`) — el navegador autocompleta
+   y el asistente de contraseñas funciona; `inputMode="numeric|decimal|email"` en teclados
+   móviles sin bloquear el carácter a mano; `type` correcto (`tel`, `email`, `number`).
+   Foco inicial en el primer campo del formulario (login → email).
+5. **Submit consistente**: botón deshabilitado mientras envía, doble submit bloqueado,
    valores no perdidos al fallar.
-4. **Patrones con trampa:**
+6. **Patrones con trampa:**
    - **Rangos de fechas**: validar `min ≤ max` en el schema (`.refine`) y, si hay datepicker,
      pasar `minDate`/`maxDate` para que la UI no permita lo inválido.
    - Fechas en formato local vs ISO: parsear/serializar en un solo lugar (helper), no en cada
      campo; cuidar zona horaria.
    - Campos numéricos: distinguir string del input del número validado (coerción de Zod).
    - Selects con "vacío" inicial: un valor sentinela explícito, no `""` que pasa por-default.
-5. **Campos controlados de forma consistente**: un patrón en todo el repo (controlled + state
+7. **Campos controlados de forma consistente**: un patrón en todo el repo (controlled + state
    del form), no mezclar controlado/descontrolado por formulario.
-6. **Verificación (obligatoria):**
+8. **Verificación (obligatoria):**
 
    ```bash
    # schemas Zod presentes
@@ -44,6 +52,10 @@ description: Form handling and validation (Zod) for React SPAs, synced with the 
    rg "if \(.*\.value\s*===\s*''" src/components
    # doble submit sin bloqueo
    rg "onSubmit" src/ -c  vs  rg "isSubmitting|disabled=\{" src/ -c
+   # inputs sin autoComplete (formularios con campos de identidad/credenciales)
+   rg "<input" src/ -g '!*.test.*' -c  vs  rg "autoComplete" src/ -c
+   # validación en cada keystroke (onChange) sin touched/blur
+   rg "onChange.*setErrors|validate.*onChange" src/
    ```
 
 ## Anti-patrones (cómo detectarlos)
@@ -57,6 +69,8 @@ description: Form handling and validation (Zod) for React SPAs, synced with the 
 | Fecha +1 día por zona horaria en la serialización | parse/serialize dispersos: `rg "new Date\(" src/` |
 | Doble envío (doble click = doble registro) | submit sin bloqueo `disabled/isSubmitting` |
 | Campos no controlados que pierden valores en error | probar fallo de red y revisar que el form conserva lo tipeado |
+| Input de email/contraseña sin `autoComplete` (sin autofill ni gestor de contraseñas) | `rg "type=\"email\"\|type=\"password\"" src/ -l` vs `rg "autoComplete" src/` |
+| Errores que parpadean con cada tecla (validación en `onChange`) | `rg "onChange" src/` con validación dentro sin `touched`/blur |
 
 ## Solapamiento
 
