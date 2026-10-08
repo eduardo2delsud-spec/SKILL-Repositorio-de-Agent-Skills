@@ -13,7 +13,7 @@ SKILL/
 ├── backend/       # skills de backend (8 activas)
 ├── frontend/      # skills de frontend (7 activas)
 ├── devops/        # reservada
-└── global/        # skills globales front+back (1 activa)
+└── global/        # skills globales front+back (2 activas)
 ```
 
 ## Catálogo
@@ -50,6 +50,7 @@ Skills transversales: aplican por igual a backend y frontend.
 | Skill | Dispara con | Qué resuelve |
 |---|---|---|
 | [`changelog-global`](global/changelog-global/SKILL.md) | "changelog", "historial de cambios", "agregar entrada", "unreleased", "liberar versión" | 5 categorías, entradas auto-contenidas con `Files`, fecha al final, orden inverso, cierre de versión |
+| [`generador-estimaciones-global`](global/generador-estimaciones-global/SKILL.md) | "crear estimación", "estimar horas", "tiempos de desarrollo", "cuánto tarda", "estimación QA" | Docs HTML por rol con horas prellenadas (propuesta del agente), tabla Tarea × Horas, subtotales, total y semanas; listo para imprimir a PDF |
 
 ## Orden de lectura recomendado
 
@@ -64,6 +65,8 @@ eslabón asume los anteriores:
 
 **Global (ambos lados):** `changelog-global` — cada cambio funcional se registra en el
 `CHANGELOG.md` del servicio en el mismo gesto, sin importar de qué lado sea.
+`generador-estimaciones-global` — cuando pidan tiempos de features, genera los documentos
+HTML por rol con las horas propuestas, para ajustar antes de imprimir.
 
 Las conexiones exactas entre eslabones están en la sección `## Solapamiento` de cada skill.
 

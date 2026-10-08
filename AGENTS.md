@@ -36,8 +36,9 @@ SKILL/
 │   ├── formularios-frontend/SKILL.md
 │   └── ui-bloques-frontend/SKILL.md
 ├── devops/                # reservada (vacía)
-└── global/                # skills globales: aplican a backend y frontend (1)
-    └── changelog-global/SKILL.md
+└── global/                # skills globales: aplican a backend y frontend (2)
+    ├── changelog-global/SKILL.md
+    └── generador-estimaciones-global/SKILL.md
 ```
 
 ## Convenciones al crear o editar una skill
@@ -116,6 +117,7 @@ Skills transversales: aplican por igual a backend y frontend.
 | Skill | Categoría | Para qué |
 |---|---|---|
 | `changelog-global` | global | Formato exigente del CHANGELOG: 5 categorías, entradas auto-contenidas, fecha al final, Unreleased |
+| `generador-estimaciones-global` | global | Docs HTML por rol (backend/frontend/QA/resumen) con horas prellenadas, subtotales, total y proyección en semanas |
 
 ## Qué NO hacer
 
