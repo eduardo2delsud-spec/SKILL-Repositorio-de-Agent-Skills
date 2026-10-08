@@ -17,13 +17,24 @@ este repo**.
 SKILL/
 ├── AGENTS.md              # este archivo (contexto para el agente)
 ├── README.md              # documentación del repo
-├── backend/               # skills de backend
+├── CHANGELOG.md           # historial de cambios (obligatorio actualizar)
+├── backend/               # skills de backend (8)
 │   ├── arquitectura-backend/SKILL.md
-│   ├── config-env/SKILL.md
-│   ├── errores-respuestas/SKILL.md
-│   ├── logging-ops/SKILL.md
-│   └── validacion-entrada/SKILL.md
-├── frontend/              # reservada (vacía)
+│   ├── autenticacion-jwt-backend/SKILL.md
+│   ├── base-datos-conexion-backend/SKILL.md
+│   ├── config-env-backend/SKILL.md
+│   ├── errores-respuestas-backend/SKILL.md
+│   ├── logging-ops-backend/SKILL.md
+│   ├── testing-backend/SKILL.md
+│   └── validacion-entrada-backend/SKILL.md
+├── frontend/              # skills de frontend (7)
+│   ├── arquitectura-frontend/SKILL.md
+│   ├── auth-frontend/SKILL.md
+│   ├── config-env-frontend/SKILL.md
+│   ├── data-fetching-frontend/SKILL.md
+│   ├── estados-toast-frontend/SKILL.md
+│   ├── formularios-frontend/SKILL.md
+│   └── ui-bloques-frontend/SKILL.md
 └── devops/                # reservada (vacía)
 ```
 
@@ -51,6 +62,12 @@ SKILL/
    concretos (cambian); sí rutas convencionales de ejemplo (`src/config`, `src/middlewares`).
 7. **Omitir lo que el agente ya sabe** (qué es HTTP, qué es Express); incluir solo lo no
    obvio del dominio: convenciones, trampas y criterios de verificación.
+8. **Changelog obligatorio:** toda **alta, modificación o eliminación** de una skill — o cambio
+   de convenciones/docs del repo — se registra en [`CHANGELOG.md`](CHANGELOG.md) **en el mismo
+   gesto**, siguiendo su **Guía de uso** y su **Formato EXIGENTE** (categorías `Added` /
+   `Changed` / `Fixed` / `Removed` / `Maintenance`; categoría y título en negrita, fecha
+   `[{YYYY-MM-DD}]` al final de la línea, sección `Files (Archivos)` recomendada). La sección
+   activa es `## [Unreleased]`; al liberar se crea la entrada con fecha.
 
 ## Verificación antes de dar por terminada una edición
 
@@ -61,6 +78,8 @@ rg -i "Reglas/|Patrones/|Brain/|Proyectos/|portafolio|OpenBrain" <carpeta-de-la-
 rg "^name:" <carpeta>/SKILL.md
 # 3) tamaño
 wc -l <carpeta>/SKILL.md    # objetivo ≤ 150
+# 4) changelog registra el cambio
+rg "<nombre-de-la-skill>" CHANGELOG.md
 ```
 
 ## Catálogo vigente
@@ -68,10 +87,25 @@ wc -l <carpeta>/SKILL.md    # objetivo ≤ 150
 | Skill | Categoría | Para qué |
 |---|---|---|
 | `arquitectura-backend` | backend | Estructura de carpetas, capas y regla de dependencias unidireccionales |
-| `config-env` | backend | Env único validado al arranque con fail-fast; `.env.example` como truth |
-| `errores-respuestas` | backend | Error handler central + 404 catch-all; controllers que lanzan, no responden |
-| `logging-ops` | backend | Logger único, niveles, health check real, higiene de logs en el repo |
-| `validacion-entrada` | backend | Middleware Joi/Zod en el 100% de rutas con input |
+| `autenticacion-jwt-backend` | backend | Middleware JWT, refresh rotation, almacenamiento seguro, hash de passwords |
+| `base-datos-conexion-backend` | backend | Pool único, capa de acceso a datos, transacciones, migraciones versionadas |
+| `config-env-backend` | backend | Env único validado al arranque con fail-fast; `.env.example` como truth |
+| `errores-respuestas-backend` | backend | Error handler central + 404 catch-all; controllers que lanzan, no responden |
+| `logging-ops-backend` | backend | Logger único, niveles, health check real, higiene de logs en el repo |
+| `testing-backend` | backend | Pirámide de tests, BD aislada, fixtures, mocking correcto, CI |
+| `validacion-entrada-backend` | backend | Middleware Joi/Zod en el 100% de rutas con input |
+
+### frontend/
+
+| Skill | Categoría | Para qué |
+|---|---|---|
+| `arquitectura-frontend` | frontend | Estructura SPA canónica, capas/imports, cliente HTTP por feature |
+| `auth-frontend` | frontend | Paquete completo de auth: 8 flujos, guards, refresh/expiración |
+| `config-env-frontend` | frontend | Prefijo `VITE_`, `.env.example`, cero secretos en el bundle |
+| `data-fetching-frontend` | frontend | Cliente por feature + TanStack Query, un solo data layer |
+| `estados-toast-frontend` | frontend | 4 estados de vista + toast global accesible |
+| `formularios-frontend` | frontend | Validación Zod sincronizada con el contrato, errores inline |
+| `ui-bloques-frontend` | frontend | Paginación en URL, tokens/tema, Intl, modal changelog+manual |
 
 ## Qué NO hacer
 

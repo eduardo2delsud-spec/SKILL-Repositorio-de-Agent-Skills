@@ -1,5 +1,5 @@
 ---
-name: config-env
+name: config-env-backend
 description: Backend environment config with a single validated source (fail-fast at boot). Use when adding or changing env variables, when the server starts half-configured, when a JWT/API key is missing, or to review env/secrets hygiene. Triggers: "agregar variable de entorno", "configurar env", "revisar config", "JWT_SECRET", "el server arranca a medias", "agregar API key", ".env.example", "secretos", "DATABASE_URL".
 ---
 
@@ -72,5 +72,5 @@ servidor **no arranca**. El `.env.example` es la fuente de truth documentada.
 
 ## Solapamiento
 
-- **Precede** a las skills hermanas `errores-respuestas`, `validacion-entrada`
-  y `logging-ops`: asumen que existe un `config` único.
+- **Precede** a las skills hermanas `errores-respuestas-backend`, `validacion-entrada-backend`
+  y `logging-ops-backend`: asumen que existe un `config` único.

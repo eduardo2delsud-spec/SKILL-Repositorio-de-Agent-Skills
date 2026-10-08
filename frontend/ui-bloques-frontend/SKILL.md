@@ -1,0 +1,76 @@
+---
+name: ui-bloques-frontend
+description: Transversal UI blocks for React SPAs: pagination synced to URL, design tokens/theme, Intl locale helpers, and info modal (changelog + manual). Use when adding lists, theming, date/currency formatting, or help/changelog UI. Triggers: "paginacion", "scroll infinito", "design tokens", "tema oscuro", "formato de fechas", "moneda", "changelog en la app", "manual de uso", "modal de informacion".
+---
+
+# UI Bloques — los bloques transversales que todo SPA trae una vez
+
+**Regla:** paginación con estado en URL, tokens como única fuente de verdad, formateo `Intl`
+central y el icono "i" con changelog + manual — implementados **una vez**, reutilizados.
+
+## Cuándo usarla
+
+- Crear un listado multi-página o scroll infinito.
+- Agregar colores/tema o detectar valores hardcodeados.
+- Formatear fechas/dinero/números en varias pantallas.
+- Agregar changelog o manual dentro de la app.
+
+## Checklist de ejecución
+
+### 1. Paginación / scroll
+
+- Listados: **paginación** (`< 1 2 3 >`) o scroll infinito **consistente** (uno por app).
+- Scroll infinito solo si el backend soporta offset/contador; si no, paginación.
+- **Estado de página sincronizado a la URL** (query param `?page=`): compartible y
+  sobrevive al reload. Restaurar al entrar.
+
+### 2. Design tokens + tema
+
+- Tokens (color, spacing, typography, radius, shadow) en un solo archivo/objeto — única
+  fuente de verdad.
+- Tema claro/oscuro **por token** (variable/objeto temático), nunca `#000` suelto.
+- **Prohibido** colores/valores hardcodeados fuera de tokens.
+
+### 3. Formateo de locales
+
+- Helper central con la API `Intl` del navegador: fechas, moneda, números.
+- Ningún componente formatea a mano (`toLocaleString` suelto repetido).
+
+### 4. Icono "i": changelog + manual
+
+- Icono de información en la **barra superior** (topbar), junto a controles globales.
+- Abre **modal accesible**: cierra con `Escape`, clic en `×`/backdrop, focus trap y devolución
+  del foco al botón.
+- Contenido en módulo de datos (`info.ts`: `APP_VERSION`, `CHANGELOG`, `MANUAL`); el modal
+  solo presenta — datos separados de presentación.
+- Mantener el changelog del app alineado con el changelog del repo.
+
+### 5. Verificación (obligatoria)
+
+```bash
+# colores/valores hardcodeados fuera de tokens
+rg "#[0-9a-fA-F]{3,8}\b|rgba?\(" src/ -g '!src/styles/**'
+# formateo disperso en vez del helper Intl
+rg "toLocaleDateString|toLocaleString|Intl\." src/ -g '!src/lib/**' -g '!src/utils/**'
+# página de listado sin sync a URL
+rg "searchParams|useSearchParams" src/pages
+# accesibilidad del modal de info
+rg "aria-modal|role=\"dialog\"|Escape" src/components
+```
+
+## Anti-patrones (cómo detectarlos)
+
+| Anti-patrón | Detección |
+|---|---|
+| Colores hardcodeados en componentes | `rg "#[0-9a-fA-F]{3,8}" src/components` |
+| Página sin estados de la paginación en la URL | listado con `useState` de página y sin `useSearchParams` |
+| Scroll infinito sin soporte de offset en el backend | revisar contrato del listado |
+| Fechas/monedas formateadas distinto en cada pantalla | `rg "toLocaleString" src/` con formatos distintos |
+| Changelog hardcodeado dentro del JSX del modal | `rg "CHANGELOG" src/` → datos en módulo, no en componente |
+| Modal sin `Escape`/focus trap | `rg "role=\"dialog\"" src/` sin manejo de teclado |
+
+## Solapamiento
+
+- `estados-toast-frontend` — skeletons/empty/error comparten tokens y variantes del tema.
+- `formularios-frontend` — inputs y errores comparten tokens y helpers de formato.
+- `arquitectura-frontend` — `styles/` y el módulo `info.ts` viven donde dice la estructura.

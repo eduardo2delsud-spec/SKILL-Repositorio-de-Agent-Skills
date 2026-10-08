@@ -1,5 +1,5 @@
 ---
-name: logging-ops
+name: logging-ops-backend
 description: Single structured logger (Winston) for Express backends, correct levels, health check and log hygiene. Use when logs are missing, console.* in production, duplicated loggers, committed .log files, or to set up/fix logging and health endpoints. Triggers: "logger", "winston", "no loguea", "console.log en prod", "health check", "log rotacion", "morgan", "logging", "errores en log".
 ---
 
@@ -65,7 +65,7 @@ el repo no guarda archivos de log.
 
 ## Solapamiento
 
-- **Puente con** `errores-respuestas`: ese handler central es el mayor consumidor de
+- **Puente con** `errores-respuestas-backend`: ese handler central es el mayor consumidor de
   `logger.error`; si no existe handler, no hay log central de errores.
-- `config-env` — `LOG_LEVEL` y rutas de log se definen en el módulo único de config.
+- `config-env-backend` — `LOG_LEVEL` y rutas de log se definen en el módulo único de config.
 - No confundir con APM/métricas (fuera de alcance de esta skill).

@@ -1,5 +1,5 @@
 ---
-name: errores-respuestas
+name: errores-respuestas-backend
 description: Central error handler and uniform responses for Express backends. Use when implementing or fixing error handling, when controllers respond errors directly, when a 500 leaks error.message, or when adding a 404 catch-all. Triggers: "error 500", "manejo de errores", "error handler", "responder error", "404", "stack trace", "mensaje de error al cliente", "try catch", "revisar errores".
 ---
 
@@ -91,5 +91,5 @@ central. Una sola shape de error en todo el backend.
 
 ## Solapamiento
 
-- `validacion-entrada` define los `ValidationError` que este handler clasifica.
-- `logging-ops` define **cómo** se loguea dentro del handler (logger único, niveles).
+- `validacion-entrada-backend` define los `ValidationError` que este handler clasifica.
+- `logging-ops-backend` define **cómo** se loguea dentro del handler (logger único, niveles).

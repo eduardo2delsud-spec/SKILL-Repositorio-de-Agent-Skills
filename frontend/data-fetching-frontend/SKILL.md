@@ -1,0 +1,73 @@
+---
+name: data-fetching-frontend
+description: Centralized HTTP client per feature plus TanStack Query for React frontends. Use when fetching data, adding API calls, migrating scattered fetch to queries, fixing cache invalidation, or when two data layers coexist. Triggers: "data fetching", "tanstack query", "react-query", "fetch", "llamadas a la api", "cache", "invalidar cache", "cliente http", "hooks de datos".
+---
+
+# Data Fetching Frontend — un cliente por feature, queries para el resto
+
+**Regla:** todo HTTP pasa por `api/<feature>.ts`; el estado remoto vive en TanStack Query
+(queries/mutations con invalidación), **un solo data layer** en el repo.
+
+## Cuándo usarla
+
+- Agregar llamadas a la API o crear un hook de datos.
+- Migrar `fetch`/servicios dispersos a queries.
+- Cache que no se refresca, datos duplicados o dos formas de llamar a la API conviviendo.
+
+## Checklist de ejecución
+
+### 1. Cliente HTTP por feature
+
+- `api/<feature>.ts` centraliza: URL base (de config), headers, token, manejo de error y
+  tipado del contrato.
+- Un solo archivo `api/client.ts` con la instancia base (interceptor de auth/errores) +
+  archivos por feature que la usan.
+- Los componentes **nunca** llaman `fetch`/`axios` directo.
+
+### 2. Queries y mutations
+
+- **Query key consistente y centralizada** por recurso: `['<recurso>', params]` — definida en
+  un solo lugar (helper o constante), no strings sueltos por componente.
+- Cada query: `loading` (skeleton), `error` (retry), `empty` — ver skill `estados-toast-frontend`.
+- **Invalidación después de cada mutation**: `invalidateQueries` de lo afectado; regla: si la
+  mutation cambia `['recurso']`, invalida `['recurso']`.
+- Paginación con query params en la key para que cada página sea cacheada aparte.
+
+### 3. Un solo data layer
+
+- Si conviven una capa de servicios legacy ("data layer") y queries, **migrar y eliminar** la
+  capa vieja en la misma tarea — nunca dos formas de llamar a la API en paralelo.
+- Regla de migración: mover llamada → hook con query → borrar el servicio viejo → verificar
+  consumidores.
+
+### 4. Verificación (obligatoria)
+
+```bash
+# fetch/axios fuera de api/ (violación)
+rg "fetch\(|axios" src/ -g '!src/api/**'
+# query keys dispersas como strings sueltos (revisar consistencia)
+rg "queryKey" src/ -c
+# capa de servicios legacy conviviendo con queries
+rg "useQuery|useMutation" src/ -l   # vs archivos de servicios/manuales
+# token leído fuera del cliente
+rg "localStorage" src/hooks src/components
+```
+
+## Anti-patrones (cómo detectarlos)
+
+| Anti-patrón | Detección |
+|---|---|
+| `fetch` inline en componentes/pages | `rg "fetch\(" src/components src/pages` |
+| Dos data layers (servicios manuales + queries) conviviendo | ambos `rg "useQuery"` y servicios sin usar con `rg "export const get" src/services` |
+| Query keys inconsistentes (`"users"` vs `'users'` vs template) | `rg "queryKey: \[" src/` y comparar formas |
+| Mutation sin invalidación → UI desactualizada | `rg "useMutation" src/` sin `invalidateQueries` cercano |
+| Estado de servidor copiado a un store (duplicado con cache) | `rg "setItems\|setList" src/store` con datos que vienen de la API |
+| Loading/error resueltos con `useEffect` + `useState` manuales | `rg "useEffect" src/` + `setState` de datos remotos |
+| Token adjuntado en cada llamada en vez de interceptor | `rg "Authorization" src/ -g '!src/api/**'` |
+
+## Solapamiento
+
+- `arquitectura-frontend` — dónde viven `api/` y `hooks/` y qué importa qué.
+- `auth-frontend` — el interceptor remueve la sesión ante 401 y dispara refresh.
+- `estados-toast-frontend` — los estados de cada query (skeleton/empty/error) y errores → toast.
+- `formularios-frontend` — mutations de los formularios y sus errores inline.

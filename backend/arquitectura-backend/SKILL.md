@@ -25,7 +25,7 @@ src/
 ├── server.ts           # punto de entrada: dotenv → app → chequeo BD → listen + banner
 ├── routes/             # definición de rutas por recurso (o por módulo, ver paso 3)
 ├── modules/<dominio>/  # por dominio: routes, controller, service
-├── config/             # ÚNICO lector de process.env (ver skill config-env)
+├── config/             # ÚNICO lector de process.env (ver skill config-env-backend)
 ├── middleware/         # auth, validación, errorHandler
 ├── utils/              # helpers genéricos sin dominio
 └── db/                 # conexión, pool, migraciones
@@ -49,7 +49,7 @@ Reglas derivadas:
   de una capa superior (ni `express`, ni `req`/`res`).
 - **Sin imports cruzados entre módulos:** el módulo A no importa del módulo B directamente; si
   necesitan lo mismo, extraer a `utils/` o a un módulo compartido.
-- **`config` solo desde el arranque** — nadie más toca `process.env` (ver skill `config-env`).
+- **`config` solo desde el arranque** — nadie más toca `process.env` (ver skill `config-env-backend`).
 
 ### 3. Elegir UNA estructura
 
@@ -99,7 +99,7 @@ Cero matches en cada línea, o justificación explícita.
 
 ## Solapamiento
 
-- **Base de las hermanas**: `config-env`, `errores-respuestas`, `validacion-entrada` y
-  `logging-ops` asumen esta estructura de capas; ésta es la que define y audita.
-- `errores-respuestas` — el error handler central vive en `middleware/` y es el último del
-  chain; `config-env` — `config/` es el único lector de env; ambas dependen del layout de acá.
+- **Base de las hermanas**: `config-env-backend`, `errores-respuestas-backend`, `validacion-entrada-backend` y
+  `logging-ops-backend` asumen esta estructura de capas; ésta es la que define y audita.
+- `errores-respuestas-backend` — el error handler central vive en `middleware/` y es el último del
+  chain; `config-env-backend` — `config/` es el único lector de env; ambas dependen del layout de acá.
