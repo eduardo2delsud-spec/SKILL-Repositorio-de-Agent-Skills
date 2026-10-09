@@ -1,225 +1,128 @@
-# AGENTS.md — Contexto del repositorio de skills
+# AGENTS.md — Cómo usar las skills de este repo
 
-## Qué es este proyecto
+## Cómo usar una skill (regla general)
 
-Colección **independiente** de *agent skills* (formato `SKILL.md`, bajo `skills/<categoría>/`)
-y de *agentes* en formato portable (markdown, bajo `agents/`), pensada para instalarse en
-cualquier sistema de agentes (opencode, Claude Code, Cursor, Qoder, etc.). Es un proyecto
-**separado de todo lo demás**: no depende del vault OpenBrainCode, ni de otros repos, ni de
-sus notas/reglas/proyectos.
+1. **La `description` solo dispara, nunca explica el flujo.** Indica *qué* y *cuándo*
+   (Use when + Triggers); no resume los pasos. **Cargá la skill con el skill tool ANTES de
+   actuar** — si te quedás con la description, creés que ya conocés el flujo y lo salteás
+   (description-trap inversa).
+2. **Leé el cuerpo entero**: `Regla` → `## Cuándo usarla` → `## Checklist de ejecución`.
+3. **La Verificación es obligatoria.** El último paso del checklist de toda skill es
+   `## Verificación (obligatoria)` con comandos exactos: corré esos comandos y reportá el
+   resultado real. En cualquier implementación, además: lint + typecheck + tests del
+   proyecto, siempre en ese orden.
+4. **Si dos skills aplican**, mirá la sección `## Solapamiento` de ambas: la dueña ejecuta;
+   la otra solo si su disparador es explícito en la tarea. No dupliques el flujo.
+5. **Si la tarea encadena varias skills** (arranque de proyecto, UI completa, ciclo de un
+   cambio), seguí la cadena en orden de `## Cadenas típicas por flujo`: cada eslabón asume
+   los anteriores.
+6. **Delegación por lado:** tarea de **servidor** → agente `backend`; de **interfaz** →
+   agente `frontend` (si están instalados: aplican las skills de su categoría y exigen
+   lint + typecheck + tests). Las **transversales** (revisión, navegador, estimaciones,
+   changelog, tareas VS Code) se aplican en el agente primario con su skill directa.
+7. **No reescribas el flujo de memoria.** Si la skill ordena correr un comando, corrélo;
+   si pide una plantilla concreta, usá esa plantilla.
 
-**Consecuencia obligatoria:** las skills y los agentes de este repo son **autocontenidos y
-genéricos**. Nunca referencien proyectos externos, vaults, `Brain/`, `Reglas/`, otras skills
-ajenas ni rutas de otros repositorios. Las únicas relaciones válidas son con las **skills y
-agentes hermanos de este repo**.
+## Mapa de situaciones → skills
 
-## Estructura
+Buscá tu situación en las tablas y cargá la skill por `name` (= nombre de la carpeta).
+Si no hay fila exacta, buscá por los triggers de la description. Categorías:
+`backend/` (servidor), `frontend/` (SPA), `qa-test/` (control de calidad),
+`global/` (transversales de proceso).
 
-```
-SKILL/
-├── AGENTS.md              # este archivo (contexto para el agente)
-├── README.md              # documentación del repo
-├── CHANGELOG.md           # historial de cambios (obligatorio actualizar)
-├── skills/                # contenedor canónico: el ecosistema (npx skills) descubre SKILL.md acá
-│   ├── backend/           # skills de backend (8)
-│   │   ├── arquitectura-backend/SKILL.md
-│   │   ├── autenticacion-jwt-backend/SKILL.md
-│   │   ├── base-datos-conexion-backend/SKILL.md
-│   │   ├── config-env-backend/SKILL.md
-│   │   ├── errores-respuestas-backend/SKILL.md
-│   │   ├── logging-ops-backend/SKILL.md
-│   │   ├── testing-backend/SKILL.md
-│   │   └── validacion-entrada-backend/SKILL.md
-│   ├── frontend/          # skills de frontend (8)
-│   │   ├── accesibilidad-frontend/SKILL.md
-│   │   ├── arquitectura-frontend/SKILL.md
-│   │   ├── auth-frontend/SKILL.md
-│   │   ├── config-env-frontend/SKILL.md
-│   │   ├── data-fetching-frontend/SKILL.md
-│   │   ├── estados-toast-frontend/SKILL.md
-│   │   ├── formularios-frontend/SKILL.md
-│   │   └── ui-bloques-frontend/SKILL.md
-│   ├── devops/            # reservada (vacía)
-│   └── global/            # skills globales: aplican a backend y frontend (10)
-│       ├── changelog-global/SKILL.md
-│       ├── contrato-api-global/SKILL.md
-│       ├── crear-skill-global/SKILL.md
-│       ├── generador-estimaciones-global/SKILL.md
-│       ├── playwright-cli/SKILL.md
-│       ├── postman-builder/SKILL.md
-│       ├── revision-codigo-global/SKILL.md
-│       ├── simplificar-codigo-global/SKILL.md
-│       ├── tasks-vscode-global/SKILL.md
-│       └── tdd-global/SKILL.md
-└── agents/                # agentes portables: formato neutral (name + description + prompt)
-    ├── backend.md
-    └── frontend.md
-```
+### Al tocar el backend
 
-## Convenciones al crear o editar una skill
-
-> Para crear o editar una skill, seguir
-> [`skills/global/crear-skill-global`](skills/global/crear-skill-global/SKILL.md)
-> (intención → borrador → iteración → verificación); abajo está el resumen normativo.
-
-1. **Formato:** carpeta kebab-case que contiene `SKILL.md`. Frontmatter con `name`
-   (**igual al nombre de la carpeta**) y `description`.
-2. **Description = qué + cuándo + triggers.** Imperativa, en tercera persona, con las palabras
-   exactas que el usuario tipea, terminando en `Triggers: "palabra", "otra palabra"`.
-   Ejemplo: `description: 'Use when ... Triggers: "agregar variable de entorno", "JWT_SECRET".'`
-   La description **solo dispara** (*Use when* + triggers, "pushy"): **nunca resume el
-   flujo/workflow** de la skill — si la description describe los pasos, el agente cree que ya
-   la conoce y saltea el cuerpo entero (description-trap).
-   **Valor entrecomillado con comillas simples de YAML** (`description: '...':`): un `:`
-   seguido de espacio dentro de un escalar sin comillas (el de `Triggers:`) rompe el
-   frontmatter y el ecosistema (`npx skills`) descarta la skill por inválida.
-3. **Genérica:** 0 menciones a proyectos, vault, incidentes pasados ni rutas ajenas.
-   Los anti-patrones van con columna **Detección** (comando `rg`/`git` reproducible), nunca
-   con evidencia de un proyecto concreto.
-4. **Estructura de secciones** (orden fijo):
-   1. `# Título — frase de regla`
-   2. `**Regla:**` en 1-2 líneas (el principio que aplica la skill)
-   3. `## Cuándo usarla` (bullets de disparo)
-   4. `## Checklist de ejecución` (pasos numerados; **el último paso es siempre
-      "Verificación (obligatoria)" con comandos exactos**)
-   5. `## Anti-patrones (cómo detectarlos)` (tabla Anti-patrón | Detección)
-   6. `## Solapamiento` (solo skills de ESTE repo: hermanas con las que se cruza)
-5. **Tamaño:** ≤ 150 líneas por skill (máximo absoluto 500) y < 5k tokens. Si algo no cabe,
-   separamos en otra skill; no se usa `references/` a esta escala.
-6. **Comandos concretos, portables y estables:** `rg`/`git` copy-pasteables. Nada de rutas de
-   proyectos concretos (cambian); sí rutas convencionales de ejemplo (`src/config`, `src/middlewares`).
-   - **Bash + PowerShell:** los comandos deben correr en ambos shells. Patrones de `rg` que
-     matchean una comilla doble se escriben con `\x22` y entre comillas simples
-     (`rg 'role=\x22dialog\x22'`): el `"` literal en el argv rompe el paso de argumentos
-     nativo de PowerShell 5.1 (lo mangla silenciosamente, sin error). `[\x27\x22]` empareja
-     ambos tipos de comilla; `-e` repetido en vez de `|` alternativo cuando conviene;
-     pathspecs de git (`git ls-files "*.log"`) en vez de pipiar a `rg`; `rg --files` en vez
-     de `find`; `rg -c '^'` en vez de `wc -l`; `sort -u` está permitido. **Prohibidos**
-     `find`, `wc`, `tail`, `ls -a`, `basename`, `Measure-Object` y los lookarounds
-     (`(?!...)`: el engine default de rg no los soporta — encadenar dos `rg` con `| rg -v`).
-   - **Escapes en tablas:** dentro de una celda de tabla, `\|` es escape de markdown (evita
-     partir la tabla) y se renderiza como `|`: **al ejecutar un comando copiado de una celda,
-     leer `\|` como `|`**. En fences de código va `|` crudo (un `\|` ahí es pipe literal).
-7. **Omitir lo que el agente ya sabe** (qué es HTTP, qué es Express); incluir solo lo no
-   obvio del dominio: convenciones, trampas y criterios de verificación.
-   - Explicar el **porqué** de cada regla; un muro de `MAYÚS`/`PROHIBIDO` sin razón se
-     cumple de letra y se viola en espíritu.
-   - Los **gotchas** van en el cuerpo de la skill (si el agente no los lee antes de caer en
-     la trampa, no existen); no se externalizan.
-   - Cuando el output tiene forma fija, incluir la **plantilla concreta** (ejemplo real),
-     no una prosa que la describa.
-8. **Changelog obligatorio:** toda **alta, modificación o eliminación** de una skill — o cambio
-   de convenciones/docs del repo — se registra en [`CHANGELOG.md`](CHANGELOG.md) **en el mismo
-   gesto**, siguiendo su **Guía de uso** y su **Formato EXIGENTE** (categorías `Added` /
-   `Changed` / `Fixed` / `Removed` / `Maintenance`; categoría y título en negrita, fecha
-   `[{YYYY-MM-DD}]` al final de la línea, sección `Files (Archivos)` recomendada). La sección
-   activa es `## [Unreleased]`; al liberar se crea la entrada con fecha.
-
-## Convenciones al crear o editar un agente
-
-Los agentes viven en `agents/<nombre>.md` en **formato neutral portable**: un solo archivo
-markdown cuyo body se usa como system prompt en cualquier sistema de agentes.
-
-1. **Formato:** archivo `agents/<nombre>.md` (nombre kebab-case = `name` del frontmatter).
-   Frontmatter mínimo universal: `name` y `description`. **Nunca** `prompt:` en el
-   frontmatter — el body del archivo *es* el prompt. Sin campos vendor-specific
-   (`mode`, `tools`, `model`, `mcpServers`, `skills`): cada vendor los agrega en su
-   destino de instalación (tabla de mapeo en el README), así el archivo canonico sirve
-   tal cual en todos.
-2. **Description = qué hace + cuándo delegarla.** El agente primario decide la
-   delegación leyendo la description; debe ser "pushy" (listar los contextos aunque el
-   usuario no nombre al agente) y usar los triggers del idioma del equipo.
-3. **Skills hermanas, sin duplicarlas.** El prompt referencia las skills de
-   `skills/backend/` o `skills/frontend/` **por nombre** para aplicarlas según el tema;
-   jamás copia su contenido (regla anti-duplicación entre hermanos).
-4. **Verificación obligatoria en el prompt.** Todo agente de implementación exige correr
-   lint + typecheck + tests antes de declarar terminado, y define un contrato de salida
-   (qué se hizo, archivos tocados, resultados de los comandos).
-5. **Genérico y autocontenido:** mismas reglas que las skills — 0 menciones a proyectos,
-   vault ni rutas ajenas.
-6. **Tamaño:** ≤ 150 líneas por agente.
-7. **Changelog obligatorio:** toda alta o modificación de un agente se registra en
-   [`CHANGELOG.md`](CHANGELOG.md) en el mismo gesto, con el mismo formato exigente.
-
-## Verificación antes de dar por terminada una edición
-
-```bash
-# 1) sin referencias externas ni proyectos
-rg -i "Reglas/|Patrones/|Brain/|Proyectos/|portafolio|OpenBrain" skills/<categoria>/<carpeta>
-# 2) name = carpeta
-rg "^name:" skills/<categoria>/<carpeta>/SKILL.md
-# 3) tamaño
-rg -c '^' skills/<categoria>/<carpeta>/SKILL.md    # objetivo ≤ 150
-# 4) changelog registra el cambio
-rg "<nombre-de-la-skill>" CHANGELOG.md
-# 5) agente: name y description presentes, sin prompt: en el frontmatter
-rg -e '^name:' -e '^description:' agents/<nombre>.md
-rg '^prompt:' agents/<nombre>.md                  # debe fallar (sin match)
-# 6) agente: tamaño y changelog
-rg -c '^' agents/<nombre>.md                      # objetivo ≤ 150
-rg "<nombre-del-agente>" CHANGELOG.md
-# 7) el ecosistema descubre la skill (desde la raíz; debe aparecer en la lista)
-npx skills add . -l
-```
-
-## Catálogo vigente
-
-| Skill | Categoría | Para qué |
-|---|---|---|
-| `arquitectura-backend` | backend | Estructura de carpetas, capas y regla de dependencias unidireccionales |
-| `autenticacion-jwt-backend` | backend | Middleware JWT, refresh rotation, almacenamiento seguro, hash de passwords |
-| `base-datos-conexion-backend` | backend | Pool único, capa de acceso a datos, transacciones, migraciones versionadas |
-| `config-env-backend` | backend | Env único validado al arranque con fail-fast; `.env.example` como truth |
-| `errores-respuestas-backend` | backend | Error handler central + 404 catch-all; controllers que lanzan, no responden |
-| `logging-ops-backend` | backend | Logger único, niveles, health check real, higiene de logs en el repo |
-| `testing-backend` | backend | Pirámide de tests, BD aislada, fixtures, mocking correcto, CI |
-| `validacion-entrada-backend` | backend | Middleware Joi/Zod en el 100% de rutas con input |
-
-### frontend/
-
-| Skill | Categoría | Para qué |
-|---|---|---|
-| `accesibilidad-frontend` | frontend | WCAG 2.1 AA (teclado, ARIA, foco, contraste) + responsive mobile-first |
-| `arquitectura-frontend` | frontend | Estructura SPA canónica, capas/imports, diseño de componentes y escala de estado, prop drilling ≤3 |
-| `auth-frontend` | frontend | Paquete completo de auth: 8 flujos, guards, refresh/expiración |
-| `config-env-frontend` | frontend | Prefijo `VITE_`, `.env.example`, cero secretos en el bundle |
-| `data-fetching-frontend` | frontend | Cliente por feature + TanStack Query, un solo data layer, optimistic updates con rollback |
-| `estados-toast-frontend` | frontend | 4 estados de vista + toast global accesible |
-| `formularios-frontend` | frontend | Validación Zod sincronizada con el contrato, errores inline |
-| `ui-bloques-frontend` | frontend | Paginación en URL, tokens/tema, design system (anti aesthetic AI), Intl, modal changelog+manual |
-
-### global/
-
-Skills transversales: aplican por igual a backend y frontend.
-
-| Skill | Categoría | Para qué |
-|---|---|---|
-| `changelog-global` | global | Formato exigente del CHANGELOG: 5 categorías, entradas auto-contenidas, fecha al final, Unreleased |
-| `contrato-api-global` | global | Contract-first, errores con status únicos, validación en bordes, adición > modificación, naming REST |
-| `crear-skill-global` | global | Alta/edición de skills: intención, borrador con estructura fija, description anti-trap, suite de verificación, iteración |
-| `generador-estimaciones-global` | global | Docs HTML por rol (backend/frontend/QA/resumen) con horas prellenadas, subtotales, total y proyección en semanas |
-| `playwright-cli` | global | Navegador en vivo desde la terminal: snapshot/refs, auth persistente, consola/red, verificación runtime |
-| `postman-builder` | global | Colección Postman v2.1 desde el código Express: prefix, rutas, bodies Joi/Zod, test scripts, JSON validado |
-| `revision-codigo-global` | global | Review en 5 ejes con remedio estructural por bandera, tamaño de cambio y prioridad bugs > nits |
-| `simplificar-codigo-global` | global | Simplificar preservando comportamiento: Chesterton, 5 principios, tests intactos, alcance acotado |
-| `tasks-vscode-global` | global | `.vscode/tasks.json` solo de servicios dev: task por servicio (`powershell -NoExit`, `isBackground`, panel propio) y agregadores grupo/ALL con `dependsOn` |
-| `tdd-global` | global | Metodología TDD: RED-GREEN-REFACTOR, Prove-It para bugs, pirámide; descubrir el stack primero |
-
-### agents/
-
-Agentes portables en formato neutral (el mapeo de frontmatter/paths por vendor está en el README).
-
-| Agente | Para qué |
+| Situación (disparador) | Skill a cargar |
 |---|---|
-| `backend` | Implementa servidor por capas (Express/Node), contract-first + TDD; aplica las skills `backend/*` y no toca UI |
-| `frontend` | Implementa la SPA (React/Vite/TanStack), a11y + Core Web Vitals; aplica las skills `frontend/*` y no toca servidor |
+| Estructura de carpetas, capas, "dónde va este archivo" en el servidor | `arquitectura-backend` |
+| Diseñar un endpoint nuevo o cambiar el contrato de la API | `contrato-api-global` (primero) y después `validacion-entrada-backend` |
+| Login, JWT, refresh, proteger rutas, hash de passwords | `autenticacion-jwt-backend` |
+| Conexión a la base, pool, transacciones, migraciones | `base-datos-conexion-backend` |
+| Agregar/auditar variables de entorno, `.env.example`, secretos | `config-env-backend` |
+| Error 500/404, responses uniformes, controllers que lanzan | `errores-respuestas-backend` |
+| Logger, niveles, health check, `console.log` en prod, logs en el repo | `logging-ops-backend` |
+| Tests de API, fixtures, mocking, BD de test, CI | `testing-backend` |
 
-## Qué NO hacer
+### Al construir la UI (frontend)
 
-- No crear notas vacías ni skills sin `description` con triggers.
-- No agregar enlaces o rutas hacia fuera de este repo.
-- No duplicar contenido entre hermanas: si dos skills se pisan, una declara el solapamiento
-  y la otra ejecuta.
-- No renombrar `name` sin renombrar la carpeta (deben coincidir).
-- No poner campos vendor-specific (`mode`, `tools`, `model`, `mcpServers`) en los agentes
-  de `agents/`: rompen la portabilidad y pertenecen al destino de instalación.
+| Situación (disparador) | Skill a cargar |
+|---|---|
+| Estructura de la SPA, "dónde va este archivo", dónde vive el estado, prop drilling | `arquitectura-frontend` |
+| Variables `VITE_`, `.env`, secretos en el bundle | `config-env-frontend` |
+| Login, guards de ruta, sesión, refresh/expiración | `auth-frontend` |
+| Traer datos, caché, invalidación, optimistic updates | `data-fetching-frontend` |
+| Formularios, validación Zod, errores inline, fechas | `formularios-frontend` |
+| Loading/empty/error/retry, skeletons, toast | `estados-toast-frontend` |
+| Paginación, tema/tokens, fechas y moneda, modal de info, espaciado/tipografía del design system | `ui-bloques-frontend` |
+| Teclado, ARIA, foco, contraste, responsive | `accesibilidad-frontend` |
+
+### Al escribir lógica o arreglar un bug
+
+| Situación (disparador) | Skill a cargar |
+|---|---|
+| Lógica nueva que "tiene que estar probada" | `tdd-global` (RED → GREEN → REFACTOR) |
+| Bug reportado (antes de tocar el fix) | `tdd-global` (Prove-It: reproducir en un test → arreglar) |
+| El repo aún no tiene stack de tests definido | `tdd-global` (descubrir el stack primero) |
+
+### Al revisar o limpiar código
+
+| Situación (disparador) | Skill a cargar |
+|---|---|
+| Diff/PR a revisar antes de merge | `revision-codigo-global` |
+| La review marcó complejidad o código enrevesado | `simplificar-codigo-global` |
+
+### Al verificar en runtime (control de calidad)
+
+| Situación (disparador) | Skill a cargar |
+|---|---|
+| Abrir la app en el navegador, navegar, click, screenshot, consola/red | `playwright-cli` |
+| Generar o actualizar la colección Postman desde el código | `postman-builder` |
+
+### Al cerrar el cambio
+
+| Situación (disparador) | Skill a cargar |
+|---|---|
+| Registrar el cambio funcional en el CHANGELOG del proyecto | `changelog-global` |
+| Se agregaron o alteraron endpoints de un backend | `postman-builder` (regenerar la colección) |
+
+### Tiempos y herramientas de proyecto
+
+| Situación (disparador) | Skill a cargar |
+|---|---|
+| Estimar horas de features/módulos | `generador-estimaciones-global` |
+| Definir cómo se levantan los servicios dev desde VS Code | `tasks-vscode-global` |
+
+### Al mantener este repo
+
+| Situación (disparador) | Skill a cargar |
+|---|---|
+| Crear o editar una skill de este repo | `crear-skill-global` + secciones Convenciones de abajo |
+
+## Cadenas típicas por flujo
+
+Cada eslabón asume los anteriores; seguir el orden.
+
+- **Backend desde cero:** `arquitectura-backend` → `config-env-backend` →
+  `autenticacion-jwt-backend` → `base-datos-conexion-backend` → `validacion-entrada-backend`
+  → `errores-respuestas-backend` → `logging-ops-backend` → `testing-backend`.
+  Al diseñar cada endpoint, sumar `contrato-api-global`.
+- **Frontend desde cero:** `arquitectura-frontend` → `config-env-frontend` → `auth-frontend`
+  → `data-fetching-frontend` → `formularios-frontend` → `estados-toast-frontend` →
+  `ui-bloques-frontend` → `accesibilidad-frontend`.
+- **Ciclo de vida de un cambio:** `contrato-api-global` → `tdd-global` → implementación
+  (skills del lado que toque) → `revision-codigo-global` → `changelog-global` →
+  `postman-builder` (si hubo endpoints).
+- **UI de punta a punta:** `arquitectura-frontend` → `data-fetching-frontend` →
+  `formularios-frontend` → `estados-toast-frontend` → `ui-bloques-frontend` →
+  `accesibilidad-frontend` → `playwright-cli` (verificar) → `changelog-global`.
+- **Un bug:** `tdd-global` (reproducir en test) → corregir → `revision-codigo-global` →
+  `changelog-global`.
+
+## Qué NO hacer al usarlas
+
+- No actuar solo con la description sin cargar la skill completa.
+- No saltarte la `Verificación (obligatoria)` ni el lint + typecheck + tests.
+- No inventar el flujo cuando hay una skill que lo cubre.
+- No mezclar dominios: las skills `*-backend` no tocan UI; las `*-frontend` no tocan
+  servidor; las de `qa-test/` se aplican en los momentos de control (runtime, API, review).
+- No duplicar entre hermanas: si dos skills se pisan, manda la sección `Solapamiento`.

@@ -15,8 +15,9 @@ SKILL/
 ├── skills/        # contenedor canónico de skills (lo descubre npx skills)
 │   ├── backend/   # skills de backend (8 activas)
 │   ├── frontend/  # skills de frontend (8 activas)
+│   ├── qa-test/   # skills de QA/testing (3 activas)
 │   ├── devops/    # reservada
-│   └── global/    # skills globales front+back (10 activas)
+│   └── global/    # skills globales front+back (7 activas)
 └── agents/        # agentes portables: backend, frontend
 ```
 
@@ -58,12 +59,20 @@ Skills transversales: aplican por igual a backend y frontend.
 | [`contrato-api-global`](skills/global/contrato-api-global/SKILL.md) | "contrato de la api", "contract first", "diseñar endpoint", "interface typescript", "cambiar la api" | Contract-first, una estrategia de errores + status, validación solo en bordes, adición > modificación, naming predecible |
 | [`crear-skill-global`](skills/global/crear-skill-global/SKILL.md) | "crear skill", "nueva skill", "editar skill", "SKILL.md", "triggers" | Intención → borrador con estructura fija → description anti-trap → suite de verificación → iteración con uso real |
 | [`generador-estimaciones-global`](skills/global/generador-estimaciones-global/SKILL.md) | "crear estimación", "estimar horas", "tiempos de desarrollo", "cuánto tarda", "estimación QA" | Docs HTML por rol con horas prellenadas (propuesta del agente), tabla Tarea × Horas, subtotales, total y semanas; listo para imprimir a PDF |
-| [`playwright-cli`](skills/global/playwright-cli/SKILL.md) | "abrir en el navegador", "verificar en el browser", "screenshot de la app", "snapshot", "e2e manual" | Navegador en vivo desde la terminal: snapshots con refs, auth persistente, consola/red, loop de verificación runtime |
-| [`postman-builder`](skills/global/postman-builder/SKILL.md) | "crear postman", "coleccion postman", "actualizar postman", "generar json postman" | Colección Postman v2.1 derivada del código: prefix, rutas, bodies de Joi/Zod, test scripts, JSON validado |
-| [`revision-codigo-global`](skills/global/revision-codigo-global/SKILL.md) | "revisar codigo", "code review", "revisar el diff", "revisar PR", "antes de merge" | 5 ejes (corrección/legibilidad/arquitectura/seguridad/performance) con remedio estructural por bandera y tamaño de cambio |
 | [`simplificar-codigo-global`](skills/global/simplificar-codigo-global/SKILL.md) | "simplificar codigo", "refactor", "limpiar codigo", "reducir complejidad", "funcion larga" | Comportamiento idéntico con tests intactos: valla de Chesterton, 5 principios, equilibrio anti sobre-simplificación |
 | [`tasks-vscode-global`](skills/global/tasks-vscode-global/SKILL.md) | "tasks.json", "tarea de vscode", "levantar servicios", "npm run dev", "task ALL" | `.vscode/tasks.json` solo de servicios dev: una task por servicio (`powershell -NoExit`, `isBackground`, panel propio) + agregadores grupo/ALL en paralelo con `dependsOn` |
 | [`tdd-global`](skills/global/tdd-global/SKILL.md) | "TDD", "test primero", "red green", "reproducir el bug", "prove it", "test de regresion" | Ciclo RED-GREEN-REFACTOR, Prove-It para bugs, pirámide de tests; descubrir el stack antes del primer test |
+
+### skills/qa-test/
+
+Skills de verificación y control de calidad: se aplican en los momentos de control
+(navegador en runtime, probar APIs, revisar antes de merge), no en la cadena de arranque.
+
+| Skill | Dispara con | Qué resuelve |
+|---|---|---|
+| [`playwright-cli`](skills/qa-test/playwright-cli/SKILL.md) | "abrir en el navegador", "verificar en el browser", "screenshot de la app", "snapshot", "e2e manual" | Navegador en vivo desde la terminal: snapshots con refs, auth persistente, consola/red, loop de verificación runtime |
+| [`postman-builder`](skills/qa-test/postman-builder/SKILL.md) | "crear postman", "coleccion postman", "actualizar postman", "generar json postman" | Colección Postman v2.1 derivada del código: prefix, rutas, bodies de Joi/Zod, test scripts, JSON validado |
+| [`revision-codigo-global`](skills/qa-test/revision-codigo-global/SKILL.md) | "revisar codigo", "code review", "revisar el diff", "revisar PR", "antes de merge" | 5 ejes (corrección/legibilidad/arquitectura/seguridad/performance) con remedio estructural por bandera y tamaño de cambio |
 
 ### agents/
 
@@ -93,6 +102,10 @@ HTML por rol con las horas propuestas, para ajustar antes de imprimir.
 borrador, verificación, iteración).
 `tasks-vscode-global` — al definir cómo se levantan los servicios dev del proyecto
 desde VS Code (`.vscode/tasks.json`).
+
+**QA (`qa-test/`):** se aplican en los momentos de control, no en el arranque —
+`playwright-cli` para verificar en navegador (runtime), `postman-builder` para colecciones
+de API y `revision-codigo-global` antes de merge.
 
 Las conexiones exactas entre eslabones están en la sección `## Solapamiento` de cada skill.
 
