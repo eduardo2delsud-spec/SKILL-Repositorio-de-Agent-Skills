@@ -1,7 +1,9 @@
-# SKILL — Repositorio de Agent Skills
+# SKILL — Repositorio de Agent Skills y Agentes
 
-Colección independiente de **agent skills** (formato `SKILL.md`) organizadas por categoría.
-Proyecto autocontenido: no depende de ningún otro repositorio.
+Colección independiente de **agent skills** (formato `SKILL.md`) y **agentes portables**
+(markdown) organizada por categoría. Proyecto autocontenido: no depende de ningún otro
+repositorio. Layout canónico (`skills/`) descubierto por el ecosistema `npx skills`
+(Claude Code, Cursor, opencode, Qoder, Codex y 70+ agentes más).
 
 ## Estructura
 
@@ -10,48 +12,60 @@ SKILL/
 ├── AGENTS.md      # contexto y convenciones para el agente que trabaja acá
 ├── README.md      # este archivo
 ├── CHANGELOG.md   # historial de cambios (se actualiza en cada alta/modificación/baja)
-├── backend/       # skills de backend (8 activas)
-├── frontend/      # skills de frontend (7 activas)
-├── devops/        # reservada
-└── global/        # skills globales front+back (3 activas)
+├── skills/        # contenedor canónico de skills (lo descubre npx skills)
+│   ├── backend/   # skills de backend (8 activas)
+│   ├── frontend/  # skills de frontend (7 activas)
+│   ├── devops/    # reservada
+│   └── global/    # skills globales front+back (4 activas)
+└── agents/        # agentes portables: backend, frontend
 ```
 
 ## Catálogo
 
-### backend/
+### skills/backend/
 
 | Skill | Dispara con | Qué resuelve |
 |---|---|---|
-| [`arquitectura-backend`](backend/arquitectura-backend/SKILL.md) | "estructura del proyecto", "dónde va este archivo", "separación de capas" | Árbol canónico, tabla de dependencias por capa, estructura única (dominio vs capa), verificación de imports violados |
-| [`autenticacion-jwt-backend`](backend/autenticacion-jwt-backend/SKILL.md) | "JWT", "login", "token", "refresh token", "proteger ruta" | Middleware verifyToken, tokens cortos, refresh rotation, almacenamiento seguro, hash de passwords |
-| [`base-datos-conexion-backend`](backend/base-datos-conexion-backend/SKILL.md) | "conexión a la base", "pool", "migraciones", "transacción" | Pool único, capa de acceso a datos, transacciones con release, migraciones versionadas |
-| [`config-env-backend`](backend/config-env-backend/SKILL.md) | "agregar variable de entorno", "JWT_SECRET", ".env.example" | Módulo único de config con validación fail-fast, `.env.example` como fuente de truth, cero secretos |
-| [`errores-respuestas-backend`](backend/errores-respuestas-backend/SKILL.md) | "error 500", "error handler", "404", "try catch" | Handler central + 404 catch-all, controllers que lanzan y no responden, shape única de error |
-| [`logging-ops-backend`](backend/logging-ops-backend/SKILL.md) | "logger", "no loguea", "console.log en prod", "health check" | Un logger por proyecto, niveles correctos, health check real, logs fuera del repo |
-| [`testing-backend`](backend/testing-backend/SKILL.md) | "test", "jest", "vitest", "supertest", "mock", "cobertura" | Pirámide de tests, BD de test aislada, fixtures centralizados, mocking correcto, CI |
-| [`validacion-entrada-backend`](backend/validacion-entrada-backend/SKILL.md) | "validar body", "Joi", "Zod", "400 bad request" | Middleware de validación en el 100% de rutas con input, errores 400 con details |
+| [`arquitectura-backend`](skills/backend/arquitectura-backend/SKILL.md) | "estructura del proyecto", "dónde va este archivo", "separación de capas" | Árbol canónico, tabla de dependencias por capa, estructura única (dominio vs capa), verificación de imports violados |
+| [`autenticacion-jwt-backend`](skills/backend/autenticacion-jwt-backend/SKILL.md) | "JWT", "login", "token", "refresh token", "proteger ruta" | Middleware verifyToken, tokens cortos, refresh rotation, almacenamiento seguro, hash de passwords |
+| [`base-datos-conexion-backend`](skills/backend/base-datos-conexion-backend/SKILL.md) | "conexión a la base", "pool", "migraciones", "transacción" | Pool único, capa de acceso a datos, transacciones con release, migraciones versionadas |
+| [`config-env-backend`](skills/backend/config-env-backend/SKILL.md) | "agregar variable de entorno", "JWT_SECRET", ".env.example" | Módulo único de config con validación fail-fast, `.env.example` como fuente de truth, cero secretos |
+| [`errores-respuestas-backend`](skills/backend/errores-respuestas-backend/SKILL.md) | "error 500", "error handler", "404", "try catch" | Handler central + 404 catch-all, controllers que lanzan y no responden, shape única de error |
+| [`logging-ops-backend`](skills/backend/logging-ops-backend/SKILL.md) | "logger", "no loguea", "console.log en prod", "health check" | Un logger por proyecto, niveles correctos, health check real, logs fuera del repo |
+| [`testing-backend`](skills/backend/testing-backend/SKILL.md) | "test", "jest", "vitest", "supertest", "mock", "cobertura" | Pirámide de tests, BD de test aislada, fixtures centralizados, mocking correcto, CI |
+| [`validacion-entrada-backend`](skills/backend/validacion-entrada-backend/SKILL.md) | "validar body", "Joi", "Zod", "400 bad request" | Middleware de validación en el 100% de rutas con input, errores 400 con details |
 
-### frontend/
+### skills/frontend/
 
 | Skill | Dispara con | Qué resuelve |
 |---|---|---|
-| [`arquitectura-frontend`](frontend/arquitectura-frontend/SKILL.md) | "estructura del frontend", "dónde va este archivo", "por feature" | SPA canónica, tabla de dependencias por capa, cliente HTTP por feature |
-| [`auth-frontend`](frontend/auth-frontend/SKILL.md) | "login", "guard de ruta", "sesión", "recuperar contraseña" | Paquete completo de auth: 8 flujos, guards declarativos, refresh/expiración |
-| [`config-env-frontend`](frontend/config-env-frontend/SKILL.md) | "VITE_", ".env.example", "secretos en el front" | Variables públicas con prefijo y cero secretos en el bundle |
-| [`data-fetching-frontend`](frontend/data-fetching-frontend/SKILL.md) | "tanstack query", "fetch", "cache", "cliente http" | Cliente por feature, query keys consistentes, un solo data layer |
-| [`estados-toast-frontend`](frontend/estados-toast-frontend/SKILL.md) | "loading", "empty state", "toast", "reintentar" | 4 estados de vista + toast global accesible (ARIA) |
-| [`formularios-frontend`](frontend/formularios-frontend/SKILL.md) | "formularios", "validación", "zod", "errores inline" | Schema Zod sincronizado con el contrato, errores inline, trampas de fechas |
-| [`ui-bloques-frontend`](frontend/ui-bloques-frontend/SKILL.md) | "paginación", "design tokens", "tema oscuro", "changelog" | Paginación en URL, tokens/tema, formateo Intl, modal de info accesible |
+| [`arquitectura-frontend`](skills/frontend/arquitectura-frontend/SKILL.md) | "estructura del frontend", "dónde va este archivo", "por feature" | SPA canónica, tabla de dependencias por capa, cliente HTTP por feature |
+| [`auth-frontend`](skills/frontend/auth-frontend/SKILL.md) | "login", "guard de ruta", "sesión", "recuperar contraseña" | Paquete completo de auth: 8 flujos, guards declarativos, refresh/expiración |
+| [`config-env-frontend`](skills/frontend/config-env-frontend/SKILL.md) | "VITE_", ".env.example", "secretos en el front" | Variables públicas con prefijo y cero secretos en el bundle |
+| [`data-fetching-frontend`](skills/frontend/data-fetching-frontend/SKILL.md) | "tanstack query", "fetch", "cache", "cliente http" | Cliente por feature, query keys consistentes, un solo data layer |
+| [`estados-toast-frontend`](skills/frontend/estados-toast-frontend/SKILL.md) | "loading", "empty state", "toast", "reintentar" | 4 estados de vista + toast global accesible (ARIA) |
+| [`formularios-frontend`](skills/frontend/formularios-frontend/SKILL.md) | "formularios", "validación", "zod", "errores inline" | Schema Zod sincronizado con el contrato, errores inline, trampas de fechas |
+| [`ui-bloques-frontend`](skills/frontend/ui-bloques-frontend/SKILL.md) | "paginación", "design tokens", "tema oscuro", "changelog" | Paginación en URL, tokens/tema, formateo Intl, modal de info accesible |
 
-### global/
+### skills/global/
 
 Skills transversales: aplican por igual a backend y frontend.
 
 | Skill | Dispara con | Qué resuelve |
 |---|---|---|
-| [`changelog-global`](global/changelog-global/SKILL.md) | "changelog", "historial de cambios", "agregar entrada", "unreleased", "liberar versión" | 5 categorías, entradas auto-contenidas con `Files`, fecha al final, orden inverso, cierre de versión |
-| [`crear-skill-global`](global/crear-skill-global/SKILL.md) | "crear skill", "nueva skill", "editar skill", "SKILL.md", "triggers" | Intención → borrador con estructura fija → description anti-trap → suite de verificación → iteración con uso real |
-| [`generador-estimaciones-global`](global/generador-estimaciones-global/SKILL.md) | "crear estimación", "estimar horas", "tiempos de desarrollo", "cuánto tarda", "estimación QA" | Docs HTML por rol con horas prellenadas (propuesta del agente), tabla Tarea × Horas, subtotales, total y semanas; listo para imprimir a PDF |
+| [`changelog-global`](skills/global/changelog-global/SKILL.md) | "changelog", "historial de cambios", "agregar entrada", "unreleased", "liberar versión" | 5 categorías, entradas auto-contenidas con `Files`, fecha al final, orden inverso, cierre de versión |
+| [`crear-skill-global`](skills/global/crear-skill-global/SKILL.md) | "crear skill", "nueva skill", "editar skill", "SKILL.md", "triggers" | Intención → borrador con estructura fija → description anti-trap → suite de verificación → iteración con uso real |
+| [`generador-estimaciones-global`](skills/global/generador-estimaciones-global/SKILL.md) | "crear estimación", "estimar horas", "tiempos de desarrollo", "cuánto tarda", "estimación QA" | Docs HTML por rol con horas prellenadas (propuesta del agente), tabla Tarea × Horas, subtotales, total y semanas; listo para imprimir a PDF |
+| [`tasks-vscode-global`](skills/global/tasks-vscode-global/SKILL.md) | "tasks.json", "tarea de vscode", "problem matcher", "dependsOn", "ctrl+shift+b" | `.vscode/tasks.json` validable: matchers para el panel Problems, variables portables, cadenas por `dependsOn`, inputs, group build |
+
+### agents/
+
+Agentes portables (formato neutral: `name` + `description` + body como prompt).
+
+| Agente | Delegarle cuando... |
+|---|---|
+| [`backend`](agents/backend.md) | hay que tocar servidor: endpoints, services, BD, auth, validación, errores, tests de API (no toca UI) |
+| [`frontend`](agents/frontend.md) | hay que tocar interfaz: componentes, páginas, formularios, data fetching, a11y (no toca servidor) |
 
 ## Orden de lectura recomendado
 
@@ -70,6 +84,8 @@ eslabón asume los anteriores:
 HTML por rol con las horas propuestas, para ajustar antes de imprimir.
 `crear-skill-global` — toda alta o edición de skill pasa por su checklist (intención,
 borrador, verificación, iteración).
+`tasks-vscode-global` — al definir cómo se compila, testea o linta desde VS Code
+(`.vscode/tasks.json`).
 
 Las conexiones exactas entre eslabones están en la sección `## Solapamiento` de cada skill.
 
@@ -80,7 +96,7 @@ Cada skill es una carpeta kebab-case con un `SKILL.md`:
 ```markdown
 ---
 name: nombre-de-la-skill          # = nombre de la carpeta
-description: Qué hace. Use when ... Triggers: "disparo 1", "disparo 2".
+description: 'Qué hace. Use when ... Triggers: "disparo 1", "disparo 2".'
 ---
 
 # Título — frase de regla
@@ -97,17 +113,50 @@ repositorios externos. Detalle completo en [`AGENTS.md`](AGENTS.md).
 
 ## Uso
 
-Las skills se cargan bajo demanda a través de la configuración de skills de opencode
-(`skills.paths` en `opencode.json`, o el directorio de skills de tu configuración:
-`~/.config/opencode/skills/` o `.opencode/skills/` del proyecto).
+### Skills — instalar con `npx skills` (recomendado)
 
-Para usar este repo: apuntar `skills.paths` a `SKILL/backend` (o a `SKILL/` si en el futuro
-las categorías llevan `SKILL.md` propias), o copiar las carpetas individuales que necesites.
+El layout `skills/<categoría>/<nombre>/SKILL.md` es el contenedor canónico que el
+ecosistema [skills](https://skills.sh) descubre solo: instalás directo a cualquier agente
+sin tocar nada más (con `owner/repo` de GitHub publicado, o con la ruta local):
+
+```bash
+# publicado en GitHub (reemplazar owner/repo)
+npx skills add <owner>/<repo> -a claude-code -a opencode
+
+# desde una copia local de este repo
+npx skills add <ruta-local>/SKILL -a claude-code -a cursor -a opencode -a qoder
+```
+
+Targets por vendor (instalación manual, equivalente al `npx skills`):
+
+| Vendor | Proyecto | Usuario |
+|---|---|---|
+| Claude Code | `.claude/skills/<nombre>/` | `~/.claude/skills/<nombre>/` |
+| Cursor | `.agents/skills/<nombre>/` | `~/.cursor/skills/<nombre>/` |
+| opencode | `.agents/skills/<nombre>/` | `~/.config/opencode/skills/<nombre>/` |
+| Qoder | `.qoder/skills/<nombre>/` | `~/.qoder/skills/<nombre>/` |
+| Codex CLI | `.agents/skills/<nombre>/` | `~/.agents/skills/<nombre>/` |
+
+Si usás `skills.paths` de `opencode.json`, apuntá a la carpeta `skills/` de este repo.
+
+### Agentes — copia por vendor (los skills no son agentes)
+
+`agents/<nombre>.md` es markdown neutral (`name` + `description` + body como prompt);
+cada vendor lo recibe en su carpeta y agrega sus campos extra:
+
+| Vendor | Ruta del proyecto | Extras en el frontmatter |
+|---|---|---|
+| Claude Code | `.claude/agents/<nombre>.md` | `tools:`, `model:` |
+| opencode | `.opencode/agents/<nombre>.md` | `mode: subagent` |
+| Qoder | `.qoder/agents/<nombre>.md` | `skills:`, `tools:`, `mcpServers:` |
+| Cursor / Codex | — | sin subagentes propios: usan las skills |
+
+Copiar el archivo al path del vendor y reiniciar el agente para que recargue la config.
 
 ## Agregar una skill
 
-1. Crear `<categoría>/<nombre-kebab-case>/SKILL.md` siguiendo
-   [`crear-skill-global`](global/crear-skill-global/SKILL.md) (intención → borrador →
+1. Crear `skills/<categoría>/<nombre-kebab-case>/SKILL.md` siguiendo
+   [`crear-skill-global`](skills/global/crear-skill-global/SKILL.md) (intención → borrador →
    iteración → verificación).
 2. Seguir el formato y las convenciones de [`AGENTS.md`](AGENTS.md) (frontmatter, secciones,
    genérica, ≤ 150 líneas).
@@ -116,5 +165,18 @@ las categorías llevan `SKILL.md` propias), o copiar las carpetas individuales q
 5. Registrar el cambio en [`CHANGELOG.md`](CHANGELOG.md) siguiendo su **Formato EXIGENTE**
    (`Added` / `Changed` / `Fixed` / `Removed` / `Maintenance`, en `## [Unreleased]`).
 
-> **Regla:** agregar, modificar o eliminar una skill → actualizar también el changelog,
-> en el mismo gesto (detalle en [`AGENTS.md`](AGENTS.md) → Convenciones).
+## Agregar un agente
+
+1. Crear `agents/<nombre>.md` con frontmatter mínimo (`name` = nombre de archivo,
+   `description` = qué hace + cuándo delegarlo) y el body como prompt — ver
+   "Convenciones al crear o editar un agente" en [`AGENTS.md`](AGENTS.md).
+2. Sin campos vendor-specific (`mode`, `tools`, `model`, `mcpServers`): van en la
+   tabla de mapeo de este README, no en el archivo.
+3. Referenciar las skills hermanas **por nombre** (nunca copiar su contenido) y exigir
+   lint + typecheck + tests en el prompt.
+4. Correr la verificación de `AGENTS.md` (sección 5-6) y agregar la fila al catálogo
+   `### agents/` de este README y al de `AGENTS.md`.
+5. Registrar el alta en [`CHANGELOG.md`](CHANGELOG.md) en el mismo gesto.
+
+> **Regla:** agregar, modificar o eliminar una skill o un agente → actualizar también el
+> changelog, en el mismo gesto (detalle en [`AGENTS.md`](AGENTS.md) → Convenciones).
