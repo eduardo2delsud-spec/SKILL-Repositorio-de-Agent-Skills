@@ -17,9 +17,11 @@
    cambio), seguí la cadena en orden de `## Cadenas típicas por flujo`: cada eslabón asume
    los anteriores.
 6. **Delegación por lado:** tarea de **servidor** → agente `backend`; de **interfaz** →
-   agente `frontend` (si están instalados: aplican las skills de su categoría y exigen
-   lint + typecheck + tests). Las **transversales** (revisión, navegador, estimaciones,
-   changelog, tareas VS Code) se aplican en el agente primario con su skill directa.
+   agente `frontend`; **centrada en la base de datos** (schema, migraciones, queries e
+   índices, seeds) → agente `database` (si están instalados: aplican las skills de su
+   categoría y exigen lint + typecheck + tests). Las **transversales** (revisión,
+   navegador, estimaciones, changelog, tareas VS Code) se aplican en el agente primario
+   con su skill directa.
 7. **No reescribas el flujo de memoria.** Si la skill ordena correr un comando, corrélo;
    si pide una plantilla concreta, usá esa plantilla.
 

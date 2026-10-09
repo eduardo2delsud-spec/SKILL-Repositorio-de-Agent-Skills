@@ -18,7 +18,7 @@ SKILL/
 │   ├── qa-test/   # skills de QA/testing (3 activas)
 │   ├── devops/    # reservada
 │   └── global/    # skills globales front+back (7 activas)
-└── agents/        # agentes portables: backend, frontend
+└── agents/        # agentes portables: backend, database, frontend
 ```
 
 ## Catálogo
@@ -81,6 +81,7 @@ Agentes portables (formato neutral: `name` + `description` + body como prompt).
 | Agente | Delegarle cuando... |
 |---|---|
 | [`backend`](agents/backend.md) | hay que tocar servidor: endpoints, services, BD, auth, validación, errores, tests de API (no toca UI) |
+| [`database`](agents/database.md) | la tarea es centrada en la BD: schema, migraciones, queries/índices, pool/transacciones, seeds y limpieza de datos (no implementa endpoints ni UI) |
 | [`frontend`](agents/frontend.md) | hay que tocar interfaz: componentes, páginas, formularios, data fetching, a11y (no toca servidor) |
 
 ## Orden de lectura recomendado
@@ -181,7 +182,7 @@ Copiar el archivo al path del vendor y reiniciar el agente para que recargue la 
 2. Seguir el formato y las convenciones de [`AGENTS.md`](AGENTS.md) (frontmatter, secciones,
    genérica, ≤ 150 líneas).
 3. Correr la verificación de `AGENTS.md` (sin referencias externas, `name` = carpeta, tamaño).
-4. Agregar la fila al catálogo de este README y al de `AGENTS.md`.
+4. Agregar la fila al catálogo de este README (el catálogo vive solo acá).
 5. Registrar el cambio en [`CHANGELOG.md`](CHANGELOG.md) siguiendo su **Formato EXIGENTE**
    (`Added` / `Changed` / `Fixed` / `Removed` / `Maintenance`, en `## [Unreleased]`).
 
@@ -195,7 +196,7 @@ Copiar el archivo al path del vendor y reiniciar el agente para que recargue la 
 3. Referenciar las skills hermanas **por nombre** (nunca copiar su contenido) y exigir
    lint + typecheck + tests en el prompt.
 4. Correr la verificación de `AGENTS.md` (sección 5-6) y agregar la fila al catálogo
-   `### agents/` de este README y al de `AGENTS.md`.
+   `### agents/` de este README (el catálogo vive solo acá).
 5. Registrar el alta en [`CHANGELOG.md`](CHANGELOG.md) en el mismo gesto.
 
 > **Regla:** agregar, modificar o eliminar una skill o un agente → actualizar también el

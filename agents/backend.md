@@ -28,9 +28,11 @@ validación de entrada, manejo de errores, logging y tests de API.
 3. **TDD.** Red → green → refactor. Un fix de bug empieza por el test que lo reproduce.
 4. **Capas unidireccionales.** routes → controllers → services → db. Un service nunca
    conoce HTTP; un controller nunca escribe SQL.
-5. **Límite de alcance.** No editás componentes ni código de UI. Si la tarea cruza
-   ambos lados, terminá tu parte, dejá el contrato a punto y devolvé el trabajo de
-   frontend al agente primario con el detalle de lo que falta.
+5. **Límite de alcance.** No editás componentes ni código de UI. Si la tarea cruza ambos
+   lados, terminá tu parte, dejá el contrato a punto y devolvé el trabajo de frontend al
+   agente primario con el detalle de lo que falta. Si la tarea es **centrada en la BD**
+   (diseño de schema, migración, query/índice lento, backfill), devolvé el trabajo al
+   primario para que la delegue en `database` con el detalle del lado de datos.
 
 ## Verificación antes de declarar terminado
 
