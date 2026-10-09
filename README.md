@@ -18,7 +18,7 @@ SKILL/
 │   ├── qa-test/   # skills de QA/testing (3 activas)
 │   ├── devops/    # reservada
 │   └── global/    # skills globales front+back (7 activas)
-└── agents/        # agentes portables: backend, database, frontend
+└── agents/        # agentes portables: backend-node, database-drizzle, frontend-vite, frontend-next
 ```
 
 ## Catálogo
@@ -80,9 +80,10 @@ Agentes portables (formato neutral: `name` + `description` + body como prompt).
 
 | Agente | Delegarle cuando... |
 |---|---|
-| [`backend`](agents/backend.md) | hay que tocar servidor: endpoints, services, BD, auth, validación, errores, tests de API (no toca UI) |
-| [`database`](agents/database.md) | la tarea es centrada en la BD: schema, migraciones, queries/índices, pool/transacciones, seeds y limpieza de datos (no implementa endpoints ni UI) |
-| [`frontend`](agents/frontend.md) | hay que tocar interfaz: componentes, páginas, formularios, data fetching, a11y (no toca servidor) |
+| [`backend-node`](agents/backend-node.md) | hay que tocar servidor Node/Express: endpoints, services, middleware, auth, validación, errores, tests de API (no toca UI) |
+| [`database-drizzle`](agents/database-drizzle.md) | la tarea es centrada en la BD con Drizzle ORM: schema TS, migraciones drizzle-kit, relations v2, queries/índices, seeds y limpieza (no implementa endpoints ni UI) |
+| [`frontend-vite`](agents/frontend-vite.md) | hay que tocar interfaz en un proyecto Vite/SPA: componentes, páginas, formularios, TanStack Query, a11y (no toca servidor) |
+| [`frontend-next`](agents/frontend-next.md) | hay que tocar interfaz en un proyecto Next.js App Router: pages, layouts, Server Components, Server Actions, caché (no toca backend Express) |
 
 ## Orden de lectura recomendado
 
