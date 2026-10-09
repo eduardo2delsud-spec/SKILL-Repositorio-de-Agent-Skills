@@ -146,5 +146,5 @@ rg '\x22test\x22:' package.json
 - `errores-respuestas-backend` — la integración verifica la shape de error y los códigos HTTP.
 - `config-env-backend` — la BD de test usa su propia `DATABASE_URL_TEST` en config.
 - `base-datos-conexion-backend` — el pool de test se cierra en `afterAll`.
-- `logging-ops-backend` — logger en nivel `silent` en tests; el handler central se spyea para
-  verificar que `logger.error` recibe el error real.
+- `logging-ops-backend` — logger en `silent`; el handler central se spyea para verificar el error real.
+- `tdd-global` — allí vive la metodología (red-green, Prove-It); esta skill, la infraestructura.

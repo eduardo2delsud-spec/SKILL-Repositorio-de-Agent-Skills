@@ -1,6 +1,6 @@
 ---
 name: data-fetching-frontend
-description: 'Centralized HTTP client per feature plus TanStack Query for React frontends. Use when fetching data, adding API calls, migrating scattered fetch to queries, fixing cache invalidation, or when two data layers coexist. Triggers: "data fetching", "tanstack query", "react-query", "fetch", "llamadas a la api", "cache", "invalidar cache", "cliente http", "hooks de datos".'
+description: 'Centralized HTTP client per feature plus TanStack Query for React frontends, including optimistic updates with rollback. Use when fetching data, adding API calls, migrating scattered fetch to queries, fixing cache invalidation, adding optimistic updates, or when two data layers coexist. Triggers: "data fetching", "tanstack query", "react-query", "fetch", "llamadas a la api", "cache", "invalidar cache", "cliente http", "hooks de datos", "optimistic", "actualizacion optimista".'
 ---
 
 # Data Fetching Frontend — un cliente por feature, queries para el resto
@@ -31,6 +31,26 @@ description: 'Centralized HTTP client per feature plus TanStack Query for React 
 - Cada query: `loading` (skeleton), `error` (retry), `empty` — ver skill `estados-toast-frontend`.
 - **Invalidación después de cada mutation**: `invalidateQueries` de lo afectado; regla: si la
   mutation cambia `['recurso']`, invalida `['recurso']`.
+- **Optimistic updates** (la UI cambia antes de la respuesta) — el ciclo completo es
+  obligatorio: `onMutate` cancela las queries del recurso y guarda el snapshot → aplicar el
+  cambio con `setQueryData` → `onError` hace **rollback** con el snapshot → `onSettled`
+  invalida. Sin rollback, un fallo deja un **dato fantasma** en caché.
+
+```ts
+useMutation({
+  mutationFn: toggleTarea,
+  onMutate: async (id) => {
+    await queryClient.cancelQueries({ queryKey: ['tareas'] });
+    const previo = queryClient.getQueryData(['tareas']);
+    queryClient.setQueryData(['tareas'], (v) =>
+      v.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
+    return { previo };
+  },
+  onError: (_e, _id, ctx) => queryClient.setQueryData(['tareas'], ctx.previo),
+  onSettled: (_d, _e, id) => queryClient.invalidateQueries({ queryKey: ['tareas'] }),
+});
+```
+
 - Paginación con query params en la key para que cada página sea cacheada aparte.
 
 ### 3. Sin waterfalls, con cancelación
@@ -64,6 +84,9 @@ rg "queryKey" src/ -c
 rg "useQuery|useMutation" src/ -l   # vs archivos de servicios/manuales
 # token leído fuera del cliente
 rg "localStorage" src/hooks src/components
+# optimistic updates: cada onMutate debe tener su onError de rollback (>= en el archivo)
+rg -c "onMutate" src/
+rg -c "onError" src/
 # requests sin cancelar (awaits encadenados en el mismo efecto / fetch sin signal)
 rg "AbortController|signal" src/api -l
 rg -U "await.*\n.*await" src/hooks -g '!*.test.*'
@@ -77,6 +100,7 @@ rg -U "await.*\n.*await" src/hooks -g '!*.test.*'
 | Dos data layers (servicios manuales + queries) conviviendo | ambos `rg "useQuery"` y servicios sin usar con `rg "export const get" src/services` |
 | Query keys inconsistentes (`"users"` vs `'users'` vs template) | `rg "queryKey: \[" src/` y comparar formas |
 | Mutation sin invalidación → UI desactualizada | `rg "useMutation" src/` sin `invalidateQueries` cercano |
+| Optimista sin rollback → dato fantasma si falla | `rg -c "onMutate" src/` vs `rg -c "onError" src/` (el 2º debe ser ≥) |
 | Estado de servidor copiado a un store (duplicado con cache) | `rg "setItems\|setList" src/store` con datos que vienen de la API |
 | Loading/error resueltos con `useEffect` + `useState` manuales | `rg "useEffect" src/` + `setState` de datos remotos |
 | Token adjuntado en cada llamada en vez de interceptor | `rg "Authorization" src/ -g '!src/api/**'` |

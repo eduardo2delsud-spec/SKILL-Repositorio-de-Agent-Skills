@@ -14,9 +14,9 @@ SKILL/
 ├── CHANGELOG.md   # historial de cambios (se actualiza en cada alta/modificación/baja)
 ├── skills/        # contenedor canónico de skills (lo descubre npx skills)
 │   ├── backend/   # skills de backend (8 activas)
-│   ├── frontend/  # skills de frontend (7 activas)
+│   ├── frontend/  # skills de frontend (8 activas)
 │   ├── devops/    # reservada
-│   └── global/    # skills globales front+back (4 activas)
+│   └── global/    # skills globales front+back (10 activas)
 └── agents/        # agentes portables: backend, frontend
 ```
 
@@ -39,13 +39,14 @@ SKILL/
 
 | Skill | Dispara con | Qué resuelve |
 |---|---|---|
-| [`arquitectura-frontend`](skills/frontend/arquitectura-frontend/SKILL.md) | "estructura del frontend", "dónde va este archivo", "por feature" | SPA canónica, tabla de dependencias por capa, cliente HTTP por feature |
+| [`accesibilidad-frontend`](skills/frontend/accesibilidad-frontend/SKILL.md) | "accesibilidad", "a11y", "WCAG", "lector de pantalla", "responsive", "breakpoints" | WCAG 2.1 AA: teclado, ARIA, foco en modales, contraste 4.5:1, jerarquía de headings, mobile-first |
+| [`arquitectura-frontend`](skills/frontend/arquitectura-frontend/SKILL.md) | "estructura del frontend", "dónde va este archivo", "por feature", "prop drilling", "diseno de componentes" | SPA canónica, tabla de dependencias por capa, diseño de componentes (composición > configuración), escala de estado, prop drilling ≤3 |
 | [`auth-frontend`](skills/frontend/auth-frontend/SKILL.md) | "login", "guard de ruta", "sesión", "recuperar contraseña" | Paquete completo de auth: 8 flujos, guards declarativos, refresh/expiración |
 | [`config-env-frontend`](skills/frontend/config-env-frontend/SKILL.md) | "VITE_", ".env.example", "secretos en el front" | Variables públicas con prefijo y cero secretos en el bundle |
-| [`data-fetching-frontend`](skills/frontend/data-fetching-frontend/SKILL.md) | "tanstack query", "fetch", "cache", "cliente http" | Cliente por feature, query keys consistentes, un solo data layer |
+| [`data-fetching-frontend`](skills/frontend/data-fetching-frontend/SKILL.md) | "tanstack query", "fetch", "cache", "cliente http", "optimistic" | Cliente por feature, query keys consistentes, un solo data layer, optimistic updates con rollback |
 | [`estados-toast-frontend`](skills/frontend/estados-toast-frontend/SKILL.md) | "loading", "empty state", "toast", "reintentar" | 4 estados de vista + toast global accesible (ARIA) |
 | [`formularios-frontend`](skills/frontend/formularios-frontend/SKILL.md) | "formularios", "validación", "zod", "errores inline" | Schema Zod sincronizado con el contrato, errores inline, trampas de fechas |
-| [`ui-bloques-frontend`](skills/frontend/ui-bloques-frontend/SKILL.md) | "paginación", "design tokens", "tema oscuro", "changelog" | Paginación en URL, tokens/tema, formateo Intl, modal de info accesible |
+| [`ui-bloques-frontend`](skills/frontend/ui-bloques-frontend/SKILL.md) | "paginación", "design tokens", "tema oscuro", "changelog", "design system", "espaciado" | Paginación en URL, tokens/tema, design system adherence (anti "aesthetic AI"), formateo Intl, modal de info accesible |
 
 ### skills/global/
 
@@ -54,9 +55,15 @@ Skills transversales: aplican por igual a backend y frontend.
 | Skill | Dispara con | Qué resuelve |
 |---|---|---|
 | [`changelog-global`](skills/global/changelog-global/SKILL.md) | "changelog", "historial de cambios", "agregar entrada", "unreleased", "liberar versión" | 5 categorías, entradas auto-contenidas con `Files`, fecha al final, orden inverso, cierre de versión |
+| [`contrato-api-global`](skills/global/contrato-api-global/SKILL.md) | "contrato de la api", "contract first", "diseñar endpoint", "interface typescript", "cambiar la api" | Contract-first, una estrategia de errores + status, validación solo en bordes, adición > modificación, naming predecible |
 | [`crear-skill-global`](skills/global/crear-skill-global/SKILL.md) | "crear skill", "nueva skill", "editar skill", "SKILL.md", "triggers" | Intención → borrador con estructura fija → description anti-trap → suite de verificación → iteración con uso real |
 | [`generador-estimaciones-global`](skills/global/generador-estimaciones-global/SKILL.md) | "crear estimación", "estimar horas", "tiempos de desarrollo", "cuánto tarda", "estimación QA" | Docs HTML por rol con horas prellenadas (propuesta del agente), tabla Tarea × Horas, subtotales, total y semanas; listo para imprimir a PDF |
+| [`playwright-cli`](skills/global/playwright-cli/SKILL.md) | "abrir en el navegador", "verificar en el browser", "screenshot de la app", "snapshot", "e2e manual" | Navegador en vivo desde la terminal: snapshots con refs, auth persistente, consola/red, loop de verificación runtime |
+| [`postman-builder`](skills/global/postman-builder/SKILL.md) | "crear postman", "coleccion postman", "actualizar postman", "generar json postman" | Colección Postman v2.1 derivada del código: prefix, rutas, bodies de Joi/Zod, test scripts, JSON validado |
+| [`revision-codigo-global`](skills/global/revision-codigo-global/SKILL.md) | "revisar codigo", "code review", "revisar el diff", "revisar PR", "antes de merge" | 5 ejes (corrección/legibilidad/arquitectura/seguridad/performance) con remedio estructural por bandera y tamaño de cambio |
+| [`simplificar-codigo-global`](skills/global/simplificar-codigo-global/SKILL.md) | "simplificar codigo", "refactor", "limpiar codigo", "reducir complejidad", "funcion larga" | Comportamiento idéntico con tests intactos: valla de Chesterton, 5 principios, equilibrio anti sobre-simplificación |
 | [`tasks-vscode-global`](skills/global/tasks-vscode-global/SKILL.md) | "tasks.json", "tarea de vscode", "levantar servicios", "npm run dev", "task ALL" | `.vscode/tasks.json` solo de servicios dev: una task por servicio (`powershell -NoExit`, `isBackground`, panel propio) + agregadores grupo/ALL en paralelo con `dependsOn` |
+| [`tdd-global`](skills/global/tdd-global/SKILL.md) | "TDD", "test primero", "red green", "reproducir el bug", "prove it", "test de regresion" | Ciclo RED-GREEN-REFACTOR, Prove-It para bugs, pirámide de tests; descubrir el stack antes del primer test |
 
 ### agents/
 
@@ -76,7 +83,7 @@ eslabón asume los anteriores:
 `arquitectura-backend` → `config-env-backend` → `autenticacion-jwt-backend` → `base-datos-conexion-backend` → `validacion-entrada-backend` → `errores-respuestas-backend` → `logging-ops-backend` → `testing-backend`
 
 **Frontend:**
-`arquitectura-frontend` → `config-env-frontend` → `auth-frontend` → `data-fetching-frontend` → `formularios-frontend` → `estados-toast-frontend` → `ui-bloques-frontend`
+`arquitectura-frontend` → `config-env-frontend` → `auth-frontend` → `data-fetching-frontend` → `formularios-frontend` → `estados-toast-frontend` → `ui-bloques-frontend` → `accesibilidad-frontend`
 
 **Global (ambos lados):** `changelog-global` — cada cambio funcional se registra en el
 `CHANGELOG.md` del servicio en el mismo gesto, sin importar de qué lado sea.

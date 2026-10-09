@@ -30,7 +30,8 @@ SKILL/
 │   │   ├── logging-ops-backend/SKILL.md
 │   │   ├── testing-backend/SKILL.md
 │   │   └── validacion-entrada-backend/SKILL.md
-│   ├── frontend/          # skills de frontend (7)
+│   ├── frontend/          # skills de frontend (8)
+│   │   ├── accesibilidad-frontend/SKILL.md
 │   │   ├── arquitectura-frontend/SKILL.md
 │   │   ├── auth-frontend/SKILL.md
 │   │   ├── config-env-frontend/SKILL.md
@@ -39,11 +40,17 @@ SKILL/
 │   │   ├── formularios-frontend/SKILL.md
 │   │   └── ui-bloques-frontend/SKILL.md
 │   ├── devops/            # reservada (vacía)
-│   └── global/            # skills globales: aplican a backend y frontend (4)
+│   └── global/            # skills globales: aplican a backend y frontend (10)
 │       ├── changelog-global/SKILL.md
+│       ├── contrato-api-global/SKILL.md
 │       ├── crear-skill-global/SKILL.md
 │       ├── generador-estimaciones-global/SKILL.md
-│       └── tasks-vscode-global/SKILL.md
+│       ├── playwright-cli/SKILL.md
+│       ├── postman-builder/SKILL.md
+│       ├── revision-codigo-global/SKILL.md
+│       ├── simplificar-codigo-global/SKILL.md
+│       ├── tasks-vscode-global/SKILL.md
+│       └── tdd-global/SKILL.md
 └── agents/                # agentes portables: formato neutral (name + description + prompt)
     ├── backend.md
     └── frontend.md
@@ -172,13 +179,14 @@ npx skills add . -l
 
 | Skill | Categoría | Para qué |
 |---|---|---|
-| `arquitectura-frontend` | frontend | Estructura SPA canónica, capas/imports, cliente HTTP por feature |
+| `accesibilidad-frontend` | frontend | WCAG 2.1 AA (teclado, ARIA, foco, contraste) + responsive mobile-first |
+| `arquitectura-frontend` | frontend | Estructura SPA canónica, capas/imports, diseño de componentes y escala de estado, prop drilling ≤3 |
 | `auth-frontend` | frontend | Paquete completo de auth: 8 flujos, guards, refresh/expiración |
 | `config-env-frontend` | frontend | Prefijo `VITE_`, `.env.example`, cero secretos en el bundle |
-| `data-fetching-frontend` | frontend | Cliente por feature + TanStack Query, un solo data layer |
+| `data-fetching-frontend` | frontend | Cliente por feature + TanStack Query, un solo data layer, optimistic updates con rollback |
 | `estados-toast-frontend` | frontend | 4 estados de vista + toast global accesible |
 | `formularios-frontend` | frontend | Validación Zod sincronizada con el contrato, errores inline |
-| `ui-bloques-frontend` | frontend | Paginación en URL, tokens/tema, Intl, modal changelog+manual |
+| `ui-bloques-frontend` | frontend | Paginación en URL, tokens/tema, design system (anti aesthetic AI), Intl, modal changelog+manual |
 
 ### global/
 
@@ -187,9 +195,15 @@ Skills transversales: aplican por igual a backend y frontend.
 | Skill | Categoría | Para qué |
 |---|---|---|
 | `changelog-global` | global | Formato exigente del CHANGELOG: 5 categorías, entradas auto-contenidas, fecha al final, Unreleased |
+| `contrato-api-global` | global | Contract-first, errores con status únicos, validación en bordes, adición > modificación, naming REST |
 | `crear-skill-global` | global | Alta/edición de skills: intención, borrador con estructura fija, description anti-trap, suite de verificación, iteración |
 | `generador-estimaciones-global` | global | Docs HTML por rol (backend/frontend/QA/resumen) con horas prellenadas, subtotales, total y proyección en semanas |
+| `playwright-cli` | global | Navegador en vivo desde la terminal: snapshot/refs, auth persistente, consola/red, verificación runtime |
+| `postman-builder` | global | Colección Postman v2.1 desde el código Express: prefix, rutas, bodies Joi/Zod, test scripts, JSON validado |
+| `revision-codigo-global` | global | Review en 5 ejes con remedio estructural por bandera, tamaño de cambio y prioridad bugs > nits |
+| `simplificar-codigo-global` | global | Simplificar preservando comportamiento: Chesterton, 5 principios, tests intactos, alcance acotado |
 | `tasks-vscode-global` | global | `.vscode/tasks.json` solo de servicios dev: task por servicio (`powershell -NoExit`, `isBackground`, panel propio) y agregadores grupo/ALL con `dependsOn` |
+| `tdd-global` | global | Metodología TDD: RED-GREEN-REFACTOR, Prove-It para bugs, pirámide; descubrir el stack primero |
 
 ### agents/
 

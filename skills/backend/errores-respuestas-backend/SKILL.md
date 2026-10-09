@@ -93,3 +93,4 @@ central. Una sola shape de error en todo el backend.
 
 - `validacion-entrada-backend` define los `ValidationError` que este handler clasifica.
 - `logging-ops-backend` define **cómo** se loguea dentro del handler (logger único, niveles).
+- `contrato-api-global` — define la forma única de error (`code`/`message`) y los status que este handler emite.

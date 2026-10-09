@@ -26,6 +26,9 @@ con retry**, y existe **un toast global accesible**; los errores de API avisán 
 3. **Empty state** — mensaje + acción orientativa ("No hay resultados", botón a crear).
 4. **Error con retry** — mensaje claro + botón **Reintentar** (nunca vista en blanco).
 
+- Skeleton y regiones de carga con `aria-busy="true"` (+ `aria-label` de qué carga): el lector
+  de pantalla se entera de que algo carga, no solo quien mira la pantalla.
+
 - Búsqueda/filtro sobre lista ya cargada: el input y la lista pesada con `useDeferredValue`
   (UI responsiva mientras el filtrado corre en el siguiente render).
 
@@ -80,3 +83,4 @@ Revisión funcional: en cada lista/principal — probar con API caída (error+re
 - `auth-frontend` — formularios de auth usan estos estados + errores inline.
 - `formularios-frontend` — definición de cuándo el error va inline vs toast.
 - `ui-bloques-frontend` — tokens/variantes con los que se estilizan skeletons y toasts.
+- `accesibilidad-frontend` — audita ARIA, foco y contraste del conjunto de estados + toast.

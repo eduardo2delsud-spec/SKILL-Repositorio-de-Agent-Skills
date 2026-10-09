@@ -1,6 +1,6 @@
 ---
 name: ui-bloques-frontend
-description: 'Transversal UI blocks for React SPAs: pagination synced to URL, design tokens/theme, Intl locale helpers, and info modal (changelog + manual). Use when adding lists, theming, date/currency formatting, or help/changelog UI. Triggers: "paginacion", "scroll infinito", "design tokens", "tema oscuro", "formato de fechas", "moneda", "changelog en la app", "manual de uso", "modal de informacion".'
+description: 'Transversal UI blocks for React SPAs: pagination synced to URL, design tokens/theme, design-system adherence (anti AI-aesthetic), Intl locale helpers, and info modal (changelog + manual). Use when adding lists, theming, date/currency formatting, help/changelog UI, or reviewing spacing/typography against the design system. Triggers: "paginacion", "scroll infinito", "design tokens", "tema oscuro", "formato de fechas", "moneda", "changelog en la app", "manual de uso", "modal de informacion", "design system", "espaciado", "tipografia", "aesthetic".'
 ---
 
 # UI Bloques — los bloques transversales que todo SPA trae una vez
@@ -38,6 +38,22 @@ central y el icono "i" con changelog + manual — implementados **una vez**, reu
 - **`prefers-reduced-motion`**: respetar la media query desactivando/encurtiendo
   transiciones y animaciones no esenciales; las transiciones de UI (modal, toast) van por
   token de duración, no valores sueltos.
+- **Adherencia al design system — anti "aesthetic AI"** (la UI genérica de IA tiene estética
+  reconocible; ninguna entra al repo):
+
+| Señal de IA genérica | En su lugar |
+|---|---|
+| Paleta morada/índigo en todo | la paleta real del proyecto (los tokens existentes) |
+| Gradientes por todos lados | planos, o gradiente sutil solo si el DS lo define |
+| `rounded-2xl`/`rounded-full` en todo | escala de radios del DS (jerarquía real) |
+| Hero genérico a pantalla completa | layout según el contenido real |
+| Padding sobredimensionado e igual en todo | escala de spacing del DS (jerarquía visual) |
+| Sombras en capas compitiendo con el contenido | sutil o ninguna, la que diga el DS |
+
+- **Escala de spacing**: solo valores de la escala del DS (múltiplos de 0.25rem); prohibido
+  inventar `13px`, `2.3rem`.
+- **Tipografía**: `h1` (uno por página) → `h2` → `h3` → body → small; no saltar niveles ni
+  usar estilo de heading para contenido decorativo (cruce con `accesibilidad-frontend`).
 
 ### 3. Formateo de locales
 
@@ -70,6 +86,10 @@ rg "outline:\s*none|outline:\s*0" src/ -g '!src/styles/**'
 rg "prefers-reduced-motion" src/
 # listados dinámicos sin anuncio a lectores de pantalla (sin matches = falta)
 rg "aria-live" src/ -c
+# spacing fuera de escala en componentes (debe dar 0)
+rg "padding:\s*[0-9]+px|margin(-[a-z]+)?:\s*[0-9]+px" src/ -g '!src/styles/**'
+# gradientes decorativos fuera del DS (revisar cada match)
+rg "linear-gradient" src/ -g '!src/styles/**'
 ```
 
 ## Anti-patrones (cómo detectarlos)
@@ -85,9 +105,13 @@ rg "aria-live" src/ -c
 | `outline: none` sin foco visible de reemplazo | `rg "outline:\s*none" src/` |
 | Animaciones ignorando `prefers-reduced-motion` | `rg "prefers-reduced-motion" src/` → sin matches |
 | Cambio de página sin anuncio a lectores de pantalla | `rg "aria-live" src/` solo en toasts, no en listados |
+| Estética "AI" (paleta morada, gradientes, redondeo máximo) | `rg "linear-gradient" src/ -g '!src/styles/**'` + revisar paleta |
+| Spacing fuera de escala (`13px`, `2.3rem`) | `rg "padding:\s*[0-9]+px\|margin(-[a-z]+)?:\s*[0-9]+px" src/` |
+| Saltos de jerarquía de headings (`h1` → `h3`) | `rg -n "<h[1-6]" src/pages` (orden por página) |
 
 ## Solapamiento
 
 - `estados-toast-frontend` — skeletons/empty/error comparten tokens y variantes del tema.
 - `formularios-frontend` — inputs y errores comparten tokens y helpers de formato.
 - `arquitectura-frontend` — `styles/` y el módulo `info.ts` viven donde dice la estructura.
+- `accesibilidad-frontend` — audita que los tokens de foco/contraste que se definen acá existan realmente.

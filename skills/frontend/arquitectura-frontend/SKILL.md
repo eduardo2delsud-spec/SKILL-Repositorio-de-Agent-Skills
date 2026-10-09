@@ -1,6 +1,6 @@
 ---
 name: arquitectura-frontend
-description: 'Canonical SPA structure and layer rules for React frontends. Use when creating a new frontend, deciding where a new file goes, organizing pages/components/hooks/api/store, or when imports cross features. Triggers: "estructura del frontend", "organizar carpetas", "dónde va este archivo", "por feature", "arquitectura frontend", "organizar componentes", "layout de la SPA", "imports cruzados".'
+description: 'Canonical SPA structure, layer rules, component design and state decisions for React frontends. Use when creating a new frontend, deciding where a new file goes, organizing pages/components/hooks/api/store, choosing where state lives, or when imports cross features. Triggers: "estructura del frontend", "organizar carpetas", "dónde va este archivo", "por feature", "arquitectura frontend", "organizar componentes", "layout de la SPA", "imports cruzados", "prop drilling", "diseno de componentes", "donde guarda el estado".'
 ---
 
 # Arquitectura Frontend — estructura canónica y capas por feature
@@ -62,15 +62,44 @@ Reglas derivadas:
 | Llamada a la API | `api/<feature>.ts` |
 | Estado global de dominio | `store/<dominio>.ts` |
 
-### 4. Verificación (obligatoria)
+### 4. Componentes: diseño y estado
+
+- **Colocación por componente**: un componente no trivial vive en su carpeta con todo lo suyo:
+  `components/<área>/TaskList/` → `TaskList.tsx`, `TaskList.test.tsx`, `use-task-list.ts`
+  (si el estado es complejo) y `types.ts`.
+- **Composición > configuración**: preferir `children`/props mínimas
+  (`<Card><CardHeader/>…</Card>`) a un componente con 8 props de variantes
+  (`headerVariant`, `bodyPadding`, `content=`): cada prop de configuración es una rama de
+  render que hay que testear.
+- **Un componente, una responsabilidad**: el componente renderiza; los datos los traen
+  `hooks/`/`pages/` (la tabla de arriba ya prohíbe `api/` en `components/`).
+- **Escala de decisión de estado** — la más simple que alcanza:
+
+| Estado | Vive en |
+|---|---|
+| UI local (abierto/cerrado, tab activa) | `useState` en el componente |
+| Compartido entre 2-3 hermanos | lifting al padre más cercano |
+| Theme/auth/locale (se lee mucho, se escribe poco) | Context |
+| Filtros, paginación, estado compartible | URL (`searchParams`) — ver `ui-bloques-frontend` |
+| Datos remotos con caché | TanStack Query — ver `data-fetching-frontend` |
+| Cliente complejo compartido en toda la app | `store/` Zustand por dominio |
+
+- **Prop drilling ≤ 3 niveles**: si las props atraviesan componentes que no las usan, subir a
+  Context o reestructurar el árbol; 4+ niveles es deuda.
+
+### 5. Verificación (obligatoria)
 
 ```bash
 # fetch directo en componentes/pages (debería pasar por api/)
 rg "fetch\(|axios" src/components src/pages
+# componentes trayendo datos (debe dar 0: les corresponde a hooks/pages)
+rg "useQuery" src/components
 # stores haciendo HTTP
 rg "fetch\(|axios" src/store
 # imports entre pages (composición ilegal)
 rg "from [\x27\x22].*\.\./pages/" src/pages
+# drilling profundo: encadenado de 3+ puntos como prop (heurística, revisar contexto)
+rg -n "=\s*[a-zA-Z]+\.[a-zA-Z]+\.[a-zA-Z]+\.[a-zA-Z]+" src/pages src/components
 # estructura completa
 ls src/
 ```
@@ -87,6 +116,9 @@ Cero matches o justificación explícita.
 | Stores que hacen HTTP o render | `rg "fetch\(\|useEffect" src/store` |
 | Páginas importándose entre sí | `rg "from [\x27\x22].*pages/" src/pages` |
 | Componentes globales de un solo uso acumulándose en `components/` | carpeta `components/` sin subcarpetas y en crecimiento |
+| Componente que hace fetch en vez de recibir datos | `rg "useQuery|fetch\(" src/components` → >0 |
+| Prop drilling de 4+ niveles | `rg -n "=\s*\w+\.\w+\.\w+\.\w+" src/pages src/components` (heurística) |
+| Componente con 8 props de configuración en vez de composición | review: interface `*Props` con ≥6 props de variante/primitivo |
 | Lógica de negocio (reglas, cálculos de dominio) en el front | `rg "if \(.*(rol\|permiso\|estado)" src/components` → reglas que pertenecen al backend |
 
 ## Solapamiento
@@ -98,3 +130,4 @@ Cero matches o justificación explícita.
   qué variables existe y quién las consume lo define esa hermana.
 - `data-fetching-frontend` — reglas concretas de `api/` y queries; acá solo dónde vive y qué
   puede importar.
+- `accesibilidad-frontend` — audita teclado/ARIA/responsive sobre los componentes que esta estructura organiza.

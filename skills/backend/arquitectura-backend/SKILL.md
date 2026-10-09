@@ -104,3 +104,4 @@ módulo** o a `utils/` compartidos (apuntar a otro módulo = violación, justifi
   `logging-ops-backend` asumen esta estructura de capas; ésta es la que define y audita.
 - `errores-respuestas-backend` — el error handler central vive en `middleware/` y es el último del
   chain; `config-env-backend` — `config/` es el único lector de env; ambas dependen del layout de acá.
+- `contrato-api-global` — el contrato de la API (interfaces, errores, naming) se diseña sobre estas capas.
