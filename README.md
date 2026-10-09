@@ -56,7 +56,7 @@ Skills transversales: aplican por igual a backend y frontend.
 | [`changelog-global`](skills/global/changelog-global/SKILL.md) | "changelog", "historial de cambios", "agregar entrada", "unreleased", "liberar versión" | 5 categorías, entradas auto-contenidas con `Files`, fecha al final, orden inverso, cierre de versión |
 | [`crear-skill-global`](skills/global/crear-skill-global/SKILL.md) | "crear skill", "nueva skill", "editar skill", "SKILL.md", "triggers" | Intención → borrador con estructura fija → description anti-trap → suite de verificación → iteración con uso real |
 | [`generador-estimaciones-global`](skills/global/generador-estimaciones-global/SKILL.md) | "crear estimación", "estimar horas", "tiempos de desarrollo", "cuánto tarda", "estimación QA" | Docs HTML por rol con horas prellenadas (propuesta del agente), tabla Tarea × Horas, subtotales, total y semanas; listo para imprimir a PDF |
-| [`tasks-vscode-global`](skills/global/tasks-vscode-global/SKILL.md) | "tasks.json", "tarea de vscode", "problem matcher", "dependsOn", "ctrl+shift+b" | `.vscode/tasks.json` validable: matchers para el panel Problems, variables portables, cadenas por `dependsOn`, inputs, group build |
+| [`tasks-vscode-global`](skills/global/tasks-vscode-global/SKILL.md) | "tasks.json", "tarea de vscode", "levantar servicios", "npm run dev", "task ALL" | `.vscode/tasks.json` solo de servicios dev: una task por servicio (`powershell -NoExit`, `isBackground`, panel propio) + agregadores grupo/ALL en paralelo con `dependsOn` |
 
 ### agents/
 
@@ -84,8 +84,8 @@ eslabón asume los anteriores:
 HTML por rol con las horas propuestas, para ajustar antes de imprimir.
 `crear-skill-global` — toda alta o edición de skill pasa por su checklist (intención,
 borrador, verificación, iteración).
-`tasks-vscode-global` — al definir cómo se compila, testea o linta desde VS Code
-(`.vscode/tasks.json`).
+`tasks-vscode-global` — al definir cómo se levantan los servicios dev del proyecto
+desde VS Code (`.vscode/tasks.json`).
 
 Las conexiones exactas entre eslabones están en la sección `## Solapamiento` de cada skill.
 

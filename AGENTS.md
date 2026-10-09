@@ -189,7 +189,7 @@ Skills transversales: aplican por igual a backend y frontend.
 | `changelog-global` | global | Formato exigente del CHANGELOG: 5 categorías, entradas auto-contenidas, fecha al final, Unreleased |
 | `crear-skill-global` | global | Alta/edición de skills: intención, borrador con estructura fija, description anti-trap, suite de verificación, iteración |
 | `generador-estimaciones-global` | global | Docs HTML por rol (backend/frontend/QA/resumen) con horas prellenadas, subtotales, total y proyección en semanas |
-| `tasks-vscode-global` | global | `.vscode/tasks.json`: problem matchers, variables portables, dependsOn sin `&&`, inputs, group build |
+| `tasks-vscode-global` | global | `.vscode/tasks.json` solo de servicios dev: task por servicio (`powershell -NoExit`, `isBackground`, panel propio) y agregadores grupo/ALL con `dependsOn` |
 
 ### agents/
 

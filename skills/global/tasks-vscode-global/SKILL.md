@@ -1,114 +1,128 @@
 ---
 name: tasks-vscode-global
-description: 'Crea y edita tareas de VS Code en .vscode/tasks.json (task runner, problem matchers, variables, dependsOn, inputs, group build) para proyectos backend y frontend. Use when the user asks to add or fix a VS Code task, wire the Tasks: Run Task panel, parse compiler/linter errors in the terminal, chain build/test/lint steps, or edit tasks.json. Triggers: "tasks.json", "tarea de vscode", "agregar tarea", "crear task", "problem matcher", "dependsOn", "task runner", "ejecutar tarea en vscode", "ctrl+shift+b", "compilar en vscode".'
+description: 'Crea y edita .vscode/tasks.json SOLO para levantar los servicios del proyecto en modo dev desde VS Code (monorepo: una task por servicio, agregadores por grupo y ALL). Use when the user wants to start the project services from VS Code, add or fix a service task, or turn several services on at once. Triggers: "tasks.json", "tarea de vscode", "levantar servicios", "npm run dev", "dev server", "correr backend y frontend", "agregar servicio", "task ALL", "encender todo", "isBackground".'
 ---
 
-# Tasks de VS Code — un tasks.json validable, con matcher y sin rutas de una PC
+# Tasks de VS Code — un tasks.json solo para levantar servicios en modo dev
 
-**Regla:** cada task es portable (rutas solo con `${workspaceFolder}`), declara
-`problemMatcher` si imprime errores y se encadena con `dependsOn` — nunca con `&&`.
-El archivo queda sin comentarios (JSONC) para poder validarlo con Node.
+**Regla:** formato de casa: una task por servicio (`npm run dev` en su carpeta, con
+`powershell -NoExit`, `isBackground` y panel propio) y agregadores que los encienden en
+paralelo con `dependsOn`. Sin `&&`, sin rutas absolutas, sin comentarios JSONC — el
+archivo se valida con Node.
 
 ## Cuándo usarla
 
-- Piden "agregar una tarea de VS Code", editar `.vscode/tasks.json` o arreglar el panel de tasks.
-- Errores de compilación/lint que no se subrayan ni aparecen en el panel de Problems.
-- Encadenar pasos (lint → test → build) o parametrizar una task con un input.
-- Configurar Ctrl+Shift+B, una task de watch o tareas que corren al abrir la carpeta.
+- Piden "levantar los servicios desde VS Code", "una task para correr el backend y el
+  frontend" o "task que levante todo" (monorepo con varios `npm run dev`).
+- Agregar un servicio nuevo a `.vscode/tasks.json` o arreglar tasks existentes.
+- Encender un grupo de apps o el repo completo de una (agregadores `GRUPO` y `ALL`).
 
 ## Checklist de ejecución
 
 1. **Leer antes**: si existe `.vscode/tasks.json`, leerlo entero y respetar `version`,
-   labels y estilo; si no existe, partir de `{"version": "2.0.0", "tasks": []}`.
-2. **Anatomía por task**: `label` único y estable (otros tasks lo referencian en
-   `dependsOn`; renombrarlo rompe cadenas), `type: "shell"` solo cuando hay pipes o
-   redirecciones, `type: "process"` para invocar un binario directo (evita el quoting
-   distinto de cada shell: en Windows `shell` puede ser PowerShell o cmd). `args` como
-   array, nunca interpolados en un string.
-3. **Variables, no rutas**: `${workspaceFolder}` para `cwd` y rutas; `${env:VAR}` solo
-   para valores no secretos; `${input:id}` para parámetros que cambian por ejecución.
-   Rutas absolutas rompen la task en la PC de cualquier otro del equipo.
-4. **Problem matchers**: sin `problemMatcher` los errores no llegan al panel de Problems.
-   Built-in: `$tsc`, `$eslint-compact`, `$eslint-stylish`. En **watch tasks** usar el
-   matcher de watch (`$tsc-watch`): el matcher normal nunca detecta el fin de ronda y no
-   reporta nada. Para tools sin matcher propio, declarar uno con `owner`, `fileLocation`
-   y `pattern` (regex con los capture groups de archivo/línea/mensaje).
-5. **Cadenas por `dependsOn`**: `lint` + `test` → `build` con
-   `"dependsOrder": "sequence" | "parallel"`. Un `&&` monolítico mezcla todos los
-   errores en un solo buffer y anula los matchers de cada paso.
-6. **Inputs**: declarar el array `inputs` en la **raíz** del archivo (junto a `tasks`,
-   no dentro de la task) con `promptString`/`pickString` + `default`, y referenciar como
-   `${input:id}`.
-7. **Grupos y atajos**: `group: {"kind": "build", "isDefault": true}` para Ctrl+Shift+B;
-   `"group": "test"` para la task del runner de tests.
-8. **Vida útil**: watch tasks con `presentation.panel: "dedicated"` (si no, comparten
-   buffer con el build y se pisan los errores); `runOptions.runOn: "folderOpen"` solo
-   para el watch que siempre debe estar corriendo (cuesta arranque).
-9. **Diferencias por SO**: bloques `windows`/`linux`/`osx` para comando o shell distintos
-   (`npm` vs `npm.cmd`, `options.shell.executable`); nunca duplicar la task entera.
-10. **Plantilla concreta** — tasks.json de referencia (build encadena lint+test):
+   labels y estilo. **Descubrir los servicios reales del repo**: carpetas con
+   `package.json` cuyo script `dev` exista — labels y `cwd` salen de ese inventario,
+   nunca se inventan nombres.
+2. **Una task por servicio** con el formato de casa (el porqué de cada campo):
+   - `label`: emoji fijo por app/rol + **nombre real del servicio**
+     (`🔧 <app> Backend`, `🎨 <app> Frontend`). El label es el ID que referencian los
+     agregadores: no se renombra después (rompe los `dependsOn`).
+   - `type: "shell"`, `command: "powershell"`, `args: ["-NoExit", "-Command", "npm run dev"]`
+     — `-NoExit` mantiene la terminal viva para ver el log del server.
+   - `options.cwd: "${workspaceFolder}/<carpeta-del-servicio>"` — relativa al workspace,
+     jamás una ruta absoluta de una PC.
+   - `isBackground: true` — el server nunca termina; sin esto VS Code lo da por
+     terminado y los agregadores se comportan mal.
+   - `problemMatcher: []` explícito — un dev server no emite errores parseables acá.
+   - `presentation`: `reveal: "always"` (mostrar logs), `panel: "new"` (un panel por
+     servicio: en uno compartido los servers se pisan los logs), `focus: false` (no roba
+     el foco del editor), `clear: true` (arranca con buffer limpio).
+3. **Agregadores**: uno por app y un `ALL` final. Sin `command`/`type`: solo `dependsOn`
+   (con los labels exactos) + `dependsOrder: "parallel"` + `problemMatcher: []`.
+   Jerarquía: servicios → grupo → `ALL`, máximo 2 niveles.
+4. **Multi-SO**: `powershell` es Windows. Si el equipo es mixto, bloques `linux`/`osx`
+   con `command: "bash"` y `args: ["-c", "npm run dev"]` — nunca duplicar la task entera.
+5. **Plantilla concreta** — el formato de casa; reemplazar apps/carpetas por los
+   servicios reales descubiertos en el paso 1:
 
 ```json
 {
   "version": "2.0.0",
-  "inputs": [
-    {
-      "id": "nombreMigracion",
-      "type": "promptString",
-      "description": "Nombre de la migracion",
-      "default": "add-tabla"
-    }
-  ],
   "tasks": [
     {
-      "label": "build",
+      "label": "🔧 App1 Backend",
       "type": "shell",
-      "command": "npm run build",
-      "options": { "cwd": "${workspaceFolder}" },
-      "group": { "kind": "build", "isDefault": true },
-      "problemMatcher": "$tsc",
-      "dependsOn": ["lint", "test"],
-      "dependsOrder": "parallel"
+      "command": "powershell",
+      "args": ["-NoExit", "-Command", "npm run dev"],
+      "options": { "cwd": "${workspaceFolder}/app1-back" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "new", "focus": false, "clear": true }
     },
     {
-      "label": "lint",
+      "label": "🎨 App1 Frontend",
       "type": "shell",
-      "command": "npm run lint",
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": "$eslint-compact"
+      "command": "powershell",
+      "args": ["-NoExit", "-Command", "npm run dev"],
+      "options": { "cwd": "${workspaceFolder}/app1-front" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "new", "focus": false, "clear": true }
     },
     {
-      "label": "test",
-      "type": "process",
-      "command": "npx",
-      "args": ["vitest", "run"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "group": "test",
+      "label": "⚙️ App2 Backend",
+      "type": "shell",
+      "command": "powershell",
+      "args": ["-NoExit", "-Command", "npm run dev"],
+      "options": { "cwd": "${workspaceFolder}/app2-back" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "new", "focus": false, "clear": true }
+    },
+    {
+      "label": "💻 App2 Frontend",
+      "type": "shell",
+      "command": "powershell",
+      "args": ["-NoExit", "-Command", "npm run dev"],
+      "options": { "cwd": "${workspaceFolder}/app2-front" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "new", "focus": false, "clear": true }
+    },
+    {
+      "label": "APP1",
+      "dependsOn": ["🔧 App1 Backend", "🎨 App1 Frontend"],
+      "dependsOrder": "parallel",
       "problemMatcher": []
     },
     {
-      "label": "migracion nueva",
-      "type": "shell",
-      "command": "npm run migrate:create -- ${input:nombreMigracion}",
-      "options": { "cwd": "${workspaceFolder}" },
+      "label": "APP2",
+      "dependsOn": ["⚙️ App2 Backend", "💻 App2 Frontend"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "ALL",
+      "dependsOn": ["APP1", "APP2"],
+      "dependsOrder": "parallel",
       "problemMatcher": []
     }
   ]
 }
 ```
 
-11. **Verificación (obligatoria)**:
+6. **Verificación (obligatoria)**:
 
 ```bash
 # JSON válido y sin comentarios (falla con JSONC)
 node -e "JSON.parse(require('fs').readFileSync('.vscode/tasks.json','utf8'));console.log('ok')"
-# version presente (debe imprimir 1)
+# version presente (1) y señales del formato de casa (deben ser >0)
 rg -c '\x22version\x22:\s*\x222\.0\.0\x22' .vscode/tasks.json
-# rutas absolutas de una PC (debe dar 0)
+rg -c 'isBackground' .vscode/tasks.json
+rg -c 'NoExit' .vscode/tasks.json
+# rutas absolutas, && y secretos (deben dar 0)
 rg -c -e '[A-Za-z]:[/\\]' -e '/Users/' -e '/home/' .vscode/tasks.json
-# encadenamiento con && en vez de dependsOn (debe dar 0)
 rg -c '&&' .vscode/tasks.json
-# secretos embebidos (debe dar 0)
 rg -c -i -e 'password' -e 'secret' -e 'token' .vscode/tasks.json
 ```
 
@@ -118,17 +132,15 @@ rg -c -i -e 'password' -e 'secret' -e 'token' .vscode/tasks.json
 |---|---|
 | Rutas absolutas de una PC | `rg -c -e '[A-Za-z]:[/\\]' -e '/Users/' -e '/home/' .vscode/tasks.json` → >0 |
 | Comentarios JSONC (VS Code los tolera, `JSON.parse` no) | `node -e "JSON.parse(...)"` → error |
-| `&&` encadenando pasos en vez de `dependsOn` | `rg -c '&&' .vscode/tasks.json` → >0 |
-| Task sin `problemMatcher` que imprime errores | `rg -c 'problemMatcher' .vscode/tasks.json` → 0 con tasks activas |
-| Secretos embebidos en la task | `rg -c -i -e 'password' -e 'secret' -e 'token' .vscode/tasks.json` → >0 |
+| `&&` encadenando servicios en vez de agregador | `rg -c '&&' .vscode/tasks.json` → >0 |
+| Servicio dev sin `isBackground` (VS Code lo da por terminado) | `rg -c 'isBackground' .vscode/tasks.json` → 0 con servicios |
+| Terminal que muere: servicio sin `-NoExit` (perdés el log) | `rg -c 'NoExit' .vscode/tasks.json` → 0 con servicios |
+| Servicios compartiendo panel (se pisan los logs) | `rg -c 'panel' .vscode/tasks.json` < `rg -c 'isBackground' .vscode/tasks.json` |
+| Agregador apuntando a un label inexistente | `rg -c 'dependsOn' .vscode/tasks.json` vs los `label` del archivo |
 | Sin `"version": "2.0.0"` | `rg -c '2\.0\.0' .vscode/tasks.json` → 0 |
-| Watch task con matcher normal (no detecta rondas) | `rg -c 'tsc-watch' .vscode/tasks.json` → 0 con watch tasks |
-| Task duplicada por SO en vez de bloques `windows`/`linux` | `rg -c '\x22label\x22' .vscode/tasks.json` con labels repetidos |
+| Secretos embebidos en la task | `rg -c -i -e 'password' -e 'secret' -e 'token' .vscode/tasks.json` → >0 |
 
 ## Solapamiento
 
-- `testing-backend` — la task de test delega en el script npm del proyecto (y en el
-  runner definido allí); esta skill decide **cómo se invoca y se encadena**, no el
-  comando del runner.
-- `changelog-global` — una task nueva de build/test o un cambio de comando altera el
-  workflow del equipo: se registra en el `CHANGELOG.md` del proyecto (Maintenance).
+- `changelog-global` — sumar un servicio a las tasks o cambiar cómo se levanta altera
+  el workflow del equipo: se registra en el `CHANGELOG.md` del proyecto (Maintenance).
